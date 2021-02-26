@@ -22,6 +22,8 @@ var
   nunitLogger: ITestLogger;
 
 begin
+  ReportMemoryLeaksOnShutdown := true;
+
 {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX.RunRegisteredTests;
   exit;
@@ -32,10 +34,10 @@ begin
     // Create the test runner
     runner := TDUnitX.CreateRunner;
     // Tell the runner to use RTTI to find Fixtures
-    runner.UseRTTI := True;
+    runner.UseRTTI := true;
     // tell the runner how we will log things
     // Log to the console window
-    logger := TDUnitXConsoleLogger.Create(True);
+    logger := TDUnitXConsoleLogger.Create(true);
     runner.AddLogger(logger);
     // Generate an NUnit compatible XML File
     nunitLogger := TDUnitXXMLNUnitFileLogger.Create

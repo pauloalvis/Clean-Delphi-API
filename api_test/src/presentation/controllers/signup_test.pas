@@ -42,13 +42,16 @@ begin
     lHTTPRequest.AddPair('body', lBody);
 
     lHTTPResponse := FSUT.handle(lHTTPRequest);
+    try
+      Assert.IsTrue(lHTTPResponse.GetValue('statusCode').ToString.Equals('400'),
+        'Deve retornar 400 se o nome não for informado.');
 
-    Assert.IsTrue(lHTTPResponse.GetValue('statusCode').ToString.Equals('400'),
-      'Deve retornar 400 se o nome não for informado.');
-
-    Assert.IsTrue(lHTTPResponse.GetValue('error')
-      .ToString.Equals('"Missing param: name"'),
-      'Deve retornar o Erro: "Missing param: name" se o nome não for informado.');
+      Assert.IsTrue(lHTTPResponse.GetValue('error')
+        .ToString.Equals('"Missing param: name"'),
+        'Deve retornar o Erro: "Missing param: name" se o nome não for informado.');
+    finally
+      lHTTPResponse.DisposeOf;
+    end;
 
   finally
     lHTTPRequest.DisposeOf;
@@ -64,13 +67,16 @@ begin
     lHTTPRequest.AddPair('body', lBody);
 
     lHTTPResponse := FSUT.handle(lHTTPRequest);
+    try
+      Assert.IsTrue(lHTTPResponse.GetValue('statusCode').ToString.Equals('400'),
+        'Deve retornar 400 se o email não for informado.');
 
-    Assert.IsTrue(lHTTPResponse.GetValue('statusCode').ToString.Equals('400'),
-      'Deve retornar 400 se o email não for informado.');
-
-    Assert.IsTrue(lHTTPResponse.GetValue('error')
-      .ToString.Equals('"Missing param: email"'),
-      'Deve retornar o Erro: "Missing param: email" se o email não for informado.');
+      Assert.IsTrue(lHTTPResponse.GetValue('error')
+        .ToString.Equals('"Missing param: email"'),
+        'Deve retornar o Erro: "Missing param: email" se o email não for informado.');
+    finally
+      lHTTPResponse.DisposeOf;
+    end;
 
   finally
     lHTTPRequest.DisposeOf;
@@ -88,7 +94,5 @@ begin
 end;
 
 initialization
-
-TDUnitX.RegisterTestFixture(TSignupTest);
 
 end.
