@@ -53,6 +53,28 @@ begin
   finally
     lHTTPRequest.DisposeOf;
   end;
+
+  lHTTPRequest := TJSONObject.Create;
+  try
+    lBody := TJSONObject.Create;
+    lBody.AddPair('name', 'any_name');
+    lBody.AddPair('password', 'any_password');
+    lBody.AddPair('passwordConfirmation', 'any_password');
+
+    lHTTPRequest.AddPair('body', lBody);
+
+    lHTTPResponse := FSUT.handle(lHTTPRequest);
+
+    Assert.IsTrue(lHTTPResponse.GetValue('statusCode').ToString.Equals('400'),
+      'Deve retornar 400 se o email não for informado.');
+
+    Assert.IsTrue(lHTTPResponse.GetValue('error')
+      .ToString.Equals('"Missing param: email"'),
+      'Deve retornar o Erro: "Missing param: email" se o email não for informado.');
+
+  finally
+    lHTTPRequest.DisposeOf;
+  end;
 end;
 
 procedure TSignupTest.Setup;
