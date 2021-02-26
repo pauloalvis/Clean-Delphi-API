@@ -42,8 +42,13 @@ begin
     lHTTPRequest.AddPair('body', lBody);
 
     lHTTPResponse := FSUT.handle(lHTTPRequest);
+
     Assert.IsTrue(lHTTPResponse.GetValue('statusCode').ToString.Equals('400'),
-      'Shoud return 400 if no name is provided');
+      'Deve retornar 400 se o nome não for informado.');
+
+    Assert.IsTrue(lHTTPResponse.GetValue('error')
+      .ToString.Equals('"Missing param: name"'),
+      'Deve retornar o Erro: "Missing param: name" se o nome não for informado.');
 
   finally
     lHTTPRequest.DisposeOf;
@@ -65,4 +70,3 @@ initialization
 TDUnitX.RegisterTestFixture(TSignupTest);
 
 end.
-

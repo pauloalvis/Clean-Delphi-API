@@ -15,7 +15,8 @@ implementation
 function TSignup.handle(const httpRequest: TJSONObject): TJSONObject;
 begin
   result := TJSONObject.Create //
-    .AddPair('statusCode', TJSONNumber.Create(400));
+    .AddPair('statusCode', TJSONNumber.Create(400)) //
+    .AddPair('error', 'Missing param: name');
 end;
 
 end.
