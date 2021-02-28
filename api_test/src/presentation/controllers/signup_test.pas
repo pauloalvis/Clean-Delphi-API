@@ -26,7 +26,8 @@ implementation
 
 uses
   vcl.dialogs,
-  System.SysUtils;
+  System.SysUtils,
+  missing_param_error;
 
 procedure TSignupTest.handle;
 var
@@ -47,8 +48,8 @@ begin
         'Deve retornar 400 se o nome não for informado.');
 
       Assert.IsTrue(lHTTPResponse.GetValue('error')
-        .ToString.Equals('"Missing param: name"'),
-        'Deve retornar o Erro: "Missing param: name" se o nome não for informado.');
+        .Value.Equals(TMissingParamError.New('name').ToString),
+        'Deve retornar o Erro: "Missing param: name" se o name não for informado.');
     finally
       lHTTPResponse.DisposeOf;
     end;
@@ -72,8 +73,9 @@ begin
         'Deve retornar 400 se o email não for informado.');
 
       Assert.IsTrue(lHTTPResponse.GetValue('error')
-        .ToString.Equals('"Missing param: email"'),
+        .Value.Equals(TMissingParamError.New('email').ToString),
         'Deve retornar o Erro: "Missing param: email" se o email não for informado.');
+
     finally
       lHTTPResponse.DisposeOf;
     end;
