@@ -3,12 +3,16 @@ unit missing_param_error;
 interface
 
 type
-  MissingParamError = interface
+  Error = interface
+    ['{9A54F64D-D034-4C9C-95C2-7F974E5893B3}']
+  end;
+
+  MissingParamError = interface(Error)
     ['{9A5E1982-F3CB-4DD5-9639-8E73D5016070}']
     function ToString: String;
   end;
 
-  TMissingParamError = class(TInterfacedObject, MissingParamError)
+  TMissingParamError = class(TInterfacedObject, Error, MissingParamError)
   private
     FParamName: String;
 
