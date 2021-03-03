@@ -7,15 +7,16 @@ uses
 
   http, missing_param_error;
 
-function badRequest(const error: error): HttpResponse;
+function badRequest(const AValue: TJsonObject): HttpResponse;
 
 implementation
 
-function badRequest(const error: error): HttpResponse;
+function badRequest(const AValue: TJsonObject): HttpResponse;
 begin
   result := THttpResponse.New //
-    .statusCode(400) //
-    .body(error);
+    .statusCode(400); //
+
+  result.body(AValue);
 end;
 
 end.

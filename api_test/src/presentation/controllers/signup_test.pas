@@ -48,9 +48,15 @@ begin
     try
       Assert.IsTrue(lHTTPResponse.statusCode.ToString.Equals('400'));
 
-      Assert.IsTrue(TMissingParamError(error)
-        .ToString.Equals(TMissingParamError.New('name')),
-        'Deve retornar o Erro: "Missing param: name" se o name não for informado.');
+      Assert.IsTrue(lHTTPResponse.body. ToString.Equals('400'));
+
+
+
+      // TJSONObject(lHTTPResponse.body).Equals()
+
+      // Assert.IsTrue(TMissingParamError(error)
+      // .ToString.Equals(TMissingParamError.New('name')),
+      // 'Deve retornar o Erro: "Missing param: name" se o name não for informado.');
 
       // Assert.IsTrue(lHTTPResponse.GetValue('error')
       // .Value.Equals(TMissingParamError.New('name').ToString),

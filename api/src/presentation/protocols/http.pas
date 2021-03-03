@@ -11,8 +11,8 @@ type
     function statusCode: integer; overload;
     function statusCode(const AValue: integer): HttpResponse; overload;
 
-    function body: Variant; overload;
-    function body(const AValue: Variant): HttpResponse; overload;
+    function body: TJsonObject; overload;
+    function body(const AValue: TJsonObject): HttpResponse; overload;
   end;
 
   HttpRequest = interface
@@ -24,13 +24,13 @@ type
   THttpResponse = class(TInterfacedObject, HttpResponse)
   private
     FStatusCode: integer;
-    FBody: Variant;
+    FBody: TJsonObject;
 
     function statusCode: integer; overload;
     function statusCode(const AValue: integer): HttpResponse; overload;
 
-    function body: Variant; overload;
-    function body(const AValue: Variant): HttpResponse; overload;
+    function body: TJsonObject; overload;
+    function body(const AValue: TJsonObject): HttpResponse; overload;
   public
     class function New: HttpResponse;
   end;
@@ -47,13 +47,13 @@ type
 
 implementation
 
-function THttpResponse.body(const AValue: Variant): HttpResponse;
+function THttpResponse.body(const AValue: TJsonObject): HttpResponse;
 begin
   FBody := AValue;
   result := self;
 end;
 
-function THttpResponse.body: Variant;
+function THttpResponse.body: TJsonObject;
 begin
   result := FBody;
 end;
