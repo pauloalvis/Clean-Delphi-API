@@ -1,13 +1,22 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<test-results name="C:\projetos\clean_delphi_api\api_test\exe\api_test.exe" total="1" errors="0" failures="0" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2021-02-26" time="0.000">
+<test-results name="C:\Clean-Delphi-API\api_test\exe\api_test.exe" total="1" errors="0" failures="1" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2021-03-03" time="0.026">
   <culture-info current-culture="en" current-uiculture="en" />
-  <test-suite type="Assembly" name="api_test.exe" executed="true" result="Success" success="True" time="0.000" asserts="0">
+  <test-suite type="Assembly" name="api_test.exe" executed="true" result="Failure" success="False" time="0.026" asserts="0">
     <results>
-        <test-suite type="Namespace" name="signup_test" executed="true" result="Success" success="True" time="0.000" asserts="0" >
+        <test-suite type="Namespace" name="signup_test" executed="true" result="Failure" success="False" time="0.025" asserts="0" >
           <results>
-              <test-suite type="Fixture" name="TSignupTest" executed="True" result="Success" success="True" time="0.000" >
+              <test-suite type="Fixture" name="TSignupTest" executed="True" result="Failure" success="False" time="0.025" >
                 <results>
-                  <test-case name="handle" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                  <test-case name="handle" executed="True" result="Failure" success="False" time="0.016" asserts="0" >
+                    <failure>
+                      <message>
+                        <![CDATA[ Condition is False when True expected. [Deve retornar o error 'Missing param: name' ao verificar ausência do paramêtro 'name'] ]]>
+                      </message>
+                      <stack-trace>
+                        <![CDATA[  ]]>
+                      </stack-trace>
+                    </failure>
+                  </test-case>
                 </results>
               </test-suite>
           </results>

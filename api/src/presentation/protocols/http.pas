@@ -6,51 +6,62 @@ uses
   System.JSON;
 
 type
-  HttpResponse = interface
+  IHttpResponse = interface
     ['{0D13866C-0872-4F1D-BAEF-3C552828F92A}']
     function statusCode: integer; overload;
-    function statusCode(const AValue: integer): HttpResponse; overload;
+    function statusCode(const AValue: integer): IHttpResponse; overload;
 
     function body: TJsonObject; overload;
-    function body(const AValue: TJsonObject): HttpResponse; overload;
+    function body(const AValue: TJsonObject): IHttpResponse; overload;
   end;
 
-  HttpRequest = interface
+  IHttpRequest = interface
     ['{0D13866C-0872-4F1D-BAEF-3C552828F92A}']
     function body: TJsonObject; overload;
-    function body(const AValue: TJsonObject): HttpRequest; overload;
+    function body(const AValue: TJsonObject): IHttpRequest; overload;
   end;
 
-  THttpResponse = class(TInterfacedObject, HttpResponse)
+  THttpResponse = class(TInterfacedObject, IHttpResponse)
   private
     FStatusCode: integer;
     FBody: TJsonObject;
 
     function statusCode: integer; overload;
-    function statusCode(const AValue: integer): HttpResponse; overload;
+    function statusCode(const AValue: integer): IHttpResponse; overload;
 
     function body: TJsonObject; overload;
-    function body(const AValue: TJsonObject): HttpResponse; overload;
+    function body(const AValue: TJsonObject): IHttpResponse; overload;
   public
-    class function New: HttpResponse;
+    destructor Destroy; override;
+
+    class function New: IHttpResponse;
   end;
 
-  THttpRequest = class(TInterfacedObject, HttpRequest)
+  THttpRequest = class(TInterfacedObject, IHttpRequest)
   private
     FBody: TJsonObject;
 
     function body: TJsonObject; overload;
-    function body(const AValue: TJsonObject): HttpRequest; overload;
+    function body(const AValue: TJsonObject): IHttpRequest; overload;
   public
-    class function New: HttpRequest;
+    destructor Destroy; override;
+
+    class function New: IHttpRequest;
   end;
 
 implementation
 
-function THttpResponse.body(const AValue: TJsonObject): HttpResponse;
+function THttpResponse.body(const AValue: TJsonObject): IHttpResponse;
 begin
   FBody := AValue;
   result := self;
+end;
+
+destructor THttpResponse.Destroy;
+begin
+  FBody.DisposeOf;
+
+  inherited;
 end;
 
 function THttpResponse.body: TJsonObject;
@@ -58,12 +69,12 @@ begin
   result := FBody;
 end;
 
-class function THttpResponse.New: HttpResponse;
+class function THttpResponse.New: IHttpResponse;
 begin
   result := self.Create;
 end;
 
-function THttpResponse.statusCode(const AValue: integer): HttpResponse;
+function THttpResponse.statusCode(const AValue: integer): IHttpResponse;
 begin
   FStatusCode := AValue;
   result := self;
@@ -79,13 +90,20 @@ begin
   result := FBody;
 end;
 
-function THttpRequest.body(const AValue: TJsonObject): HttpRequest;
+function THttpRequest.body(const AValue: TJsonObject): IHttpRequest;
 begin
   FBody := AValue;
   result := self;
 end;
 
-class function THttpRequest.New: HttpRequest;
+destructor THttpRequest.Destroy;
+begin
+  FBody.DisposeOf;
+
+  inherited;
+ end;
+
+class function THttpRequest.New: IHttpRequest;
 begin
   result := self.Create;
 end;

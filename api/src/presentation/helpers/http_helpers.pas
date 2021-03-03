@@ -3,20 +3,19 @@ unit http_helpers;
 interface
 
 uses
-  System.JSON,
+ System.JSON,
 
-  http, missing_param_error;
+  http;
 
-function badRequest(const AValue: TJsonObject): HttpResponse;
+function badRequest(const AError: TJSONObject): IHttpResponse;
 
 implementation
 
-function badRequest(const AValue: TJsonObject): HttpResponse;
+function badRequest(const AError: TJSONObject): IHttpResponse;
 begin
   result := THttpResponse.New //
-    .statusCode(400); //
-
-  result.body(AValue);
+  .statusCode(400)//
+  .body(AError);
 end;
 
 end.

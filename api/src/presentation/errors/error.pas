@@ -2,24 +2,15 @@ unit error;
 
 interface
 
-type
-  IError<T> = interface
-    ['{9A54F64D-D034-4C9C-95C2-7F974E5893B3}']
-    function Instance: T;
-  end;
+uses
+  System.JSON;
 
-  TError<T> = class(TInterfacedObject, IError<T>)
-  private
-    FValue: T;
-  public
-    class function Instance: T;
+type
+  IError = interface
+    ['{7FC49DE8-86FE-42F4-9991-2B665660F8D0}']
+    function GetBody: TJSONObject;
   end;
 
 implementation
-
-class function TError<T>.Instance: T;
-begin
-  // result := FValue;
-end;
 
 end.

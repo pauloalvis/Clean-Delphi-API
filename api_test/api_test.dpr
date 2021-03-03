@@ -6,14 +6,18 @@ program api_test;
 
 uses
   System.SysUtils,
-{$IFDEF TESTINSIGHT}
+  {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX,
-{$ENDIF }
+  {$ENDIF }
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
   signup_test in 'src\presentation\controllers\signup_test.pas',
-  signup in '..\api\src\presentation\controllers\signup.pas';
+  signup in '..\api\src\presentation\controllers\signup.pas',
+  missing_param_error in '..\api\src\presentation\errors\missing_param_error.pas',
+  http in '..\api\src\presentation\protocols\http.pas',
+  error in '..\api\src\presentation\errors\error.pas',
+  http_helpers in '..\api\src\presentation\helpers\http_helpers.pas';
 
 var
   runner: ITestRunner;

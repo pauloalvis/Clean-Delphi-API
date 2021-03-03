@@ -2,21 +2,22 @@ unit missing_param_error;
 
 interface
 
+uses
+  System.Json,
+
+  error;
+
 type
 
-  IMissingParamError = interface
-    ['{9A5E1982-F3CB-4DD5-9639-8E73D5016070}']
-    function ToString: String;
-  end;
-
-  TMissingParamError = class(TInterfacedObject, IMissingParamError)
+  TMissingParamError = class(TInterfacedObject, IError)
   private
-    FParamName: String;
+    FBody: TJSONObject;
 
+    function GetBody: TJSONObject;
     constructor Create(Const AParamName: String);
+
   public
-    function ToString: String; override;
-    class function New(Const AParamName: String): IMissingParamError;
+    class function New(Const AParamName: String): IError;
   end;
 
 implementation
@@ -26,18 +27,17 @@ uses
 
 constructor TMissingParamError.Create(const AParamName: String);
 begin
-  FParamName := AParamName;
+  FBody := TJSONObject.Create.AddPair('error', format('Missing param: %s', [AParamName]));
 end;
 
-class function TMissingParamError.New(Const AParamName: String)
-  : IMissingParamError;
+function TMissingParamError.GetBody: TJSONObject;
+begin
+  result := FBody;
+end;
+
+class function TMissingParamError.New(Const AParamName: String): IError;
 begin
   result := self.Create(AParamName);
-end;
-
-function TMissingParamError.ToString: String;
-begin
-  result := format('Missing param: %s', [FParamName]);
 end;
 
 end.
