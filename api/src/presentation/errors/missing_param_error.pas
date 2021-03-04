@@ -13,7 +13,7 @@ type
   private
     FBody: TJSONObject;
 
-    function GetBody: TJSONObject;
+    function Body: TJSONObject;
     constructor Create(Const AParamName: String);
 
   public
@@ -30,7 +30,7 @@ begin
   FBody := TJSONObject.Create.AddPair('error', format('Missing param: %s', [AParamName]));
 end;
 
-function TMissingParamError.GetBody: TJSONObject;
+function TMissingParamError.Body: TJSONObject;
 begin
   result := FBody;
 end;

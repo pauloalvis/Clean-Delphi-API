@@ -1,5 +1,5 @@
 unit error;
-
+
 interface
 
 uses
@@ -8,9 +8,10 @@ uses
 type
   IError = interface
     ['{7FC49DE8-86FE-42F4-9991-2B665660F8D0}']
-    function GetBody: TJSONObject;
+    function Body: TJSONObject;
   end;
 
 implementation
 
 end.
+

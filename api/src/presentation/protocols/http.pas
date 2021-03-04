@@ -98,10 +98,10 @@ end;
 
 destructor THttpRequest.Destroy;
 begin
-  FBody.DisposeOf;
-
+  FBody.free;
+  //
   inherited;
- end;
+end;
 
 class function THttpRequest.New: IHttpRequest;
 begin
