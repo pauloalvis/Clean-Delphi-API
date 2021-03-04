@@ -19,8 +19,8 @@ implementation
 function TSignupController.handle(const httpRequest: TJSONObject)
   : IHttpResponse;
 const
-  requiredFields: TArray<String> = ['name', 'email', 'password'];
-
+  requiredFields: TArray<String> = ['name', 'email', 'password',
+    'passwordConfirmation'];
 var
   lField: String;
 begin

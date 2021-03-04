@@ -73,6 +73,19 @@ begin
   Assert.IsTrue(lHTTPResponse.body.GetValue('error')
     .Value.Equals('Missing param: password'),
     'Deve retornar o error ''Missing param: password'' ao verificar ausência do paramêtro ''password''');
+
+  lBody := TJSONObject.Create //
+    .AddPair('name', 'any_name') //
+    .AddPair('email', 'any_email') //
+    .AddPair('password', 'any_password');
+
+  lHTTPResponse := FSUT.handle(THTTPRequest.New.body(lBody).body);
+
+  Assert.IsTrue(lHTTPResponse.statusCode.ToString.Equals('400'),
+    'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''passwordConfirmation''');
+  Assert.IsTrue(lHTTPResponse.body.GetValue('error')
+    .Value.Equals('Missing param: passwordConfirmation'),
+    'Deve retornar o error ''Missing param: password'' ao verificar ausência do paramêtro ''passwordConfirmation''');
 end;
 
 procedure TSignupTest.Setup;
