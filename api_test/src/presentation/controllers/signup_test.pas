@@ -13,7 +13,7 @@ type
   [TestFixture]
   TSignupTest = class(TObject)
   private
-    FSUT: TSignup;
+    FSUT: TSignupController;
   public
     [Setup]
     procedure Setup;
@@ -58,7 +58,7 @@ end;
 
 procedure TSignupTest.Setup;
 begin
-  FSUT := TSignup.Create;
+  FSUT := TSignupController.Create;
 end;
 
 procedure TSignupTest.TearDown;

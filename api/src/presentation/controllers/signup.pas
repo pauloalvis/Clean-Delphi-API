@@ -10,16 +10,18 @@ uses
   missing_param_error;
 
 type
-  TSignup = class
+  TSignupController = class
     function handle(const httpRequest: TJSONObject): IHttpResponse;
   end;
 
 implementation
 
-function TSignup.handle(const httpRequest: TJSONObject): IHttpResponse;
+function TSignupController.handle(const httpRequest: TJSONObject): IHttpResponse;
 begin
-  result := badRequest(TMissingParamError.New('name').GetBody);
-  result := badRequest(TMissingParamError.New('email').GetBody);
+  if not(Assigned(httpRequest.FindValue('name'))) then
+    result := badRequest(TMissingParamError.New('name').GetBody)
+  else if not(Assigned(httpRequest.FindValue('email'))) then
+    result := badRequest(TMissingParamError.New('email').GetBody);
 end;
 
 end.
