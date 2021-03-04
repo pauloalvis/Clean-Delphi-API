@@ -7,10 +7,11 @@ uses
 
   http,
   http_helpers,
-  missing_param_error;
+  missing_param_error,
+  controller;
 
 type
-  TSignupController = class
+  TSignupController = class(TInterfacedObject, IController)
     function handle(const httpRequest: TJSONObject): IHttpResponse;
   end;
 

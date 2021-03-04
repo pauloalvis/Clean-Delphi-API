@@ -17,7 +17,8 @@ uses
   missing_param_error in '..\api\src\presentation\errors\missing_param_error.pas',
   http in '..\api\src\presentation\protocols\http.pas',
   error in '..\api\src\presentation\errors\error.pas',
-  http_helpers in '..\api\src\presentation\helpers\http_helpers.pas';
+  http_helpers in '..\api\src\presentation\helpers\http_helpers.pas',
+  controller in '..\api\src\presentation\protocols\controller.pas';
 
 var
   runner: ITestRunner;

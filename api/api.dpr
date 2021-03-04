@@ -9,7 +9,8 @@ uses
   missing_param_error in 'src\presentation\errors\missing_param_error.pas',
   error in 'src\presentation\errors\error.pas',
   http in 'src\presentation\protocols\http.pas',
-  http_helpers in 'src\presentation\helpers\http_helpers.pas';
+  http_helpers in 'src\presentation\helpers\http_helpers.pas',
+  controller in 'src\presentation\protocols\controller.pas';
 
 type
   TCliente = class
