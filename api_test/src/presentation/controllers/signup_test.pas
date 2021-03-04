@@ -6,14 +6,15 @@ uses
   System.JSON,
   DUnitX.TestFramework,
 
-  signup;
+  signup,
+  controller;
 
 type
 
   [TestFixture]
   TSignupTest = class(TObject)
   private
-    FSUT: TSignupController;
+    FMockSut: IController;
   public
     [Setup]
     procedure Setup;
@@ -28,7 +29,7 @@ implementation
 uses
   System.SysUtils,
 
-  http;
+  http, missing_param_error;
 
 procedure TSignupTest.handle;
 var
@@ -40,7 +41,7 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password');
 
-  lHTTPResponse := FSUT.handle(THTTPRequest.New.body(lBody).body);
+  lHTTPResponse := FMockSut.handle(THTTPRequest.New.body(lBody).body);
 
   Assert.IsTrue(lHTTPResponse.statusCode.ToString.Equals('400'),
     'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''name''');
@@ -53,7 +54,7 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password');
 
-  lHTTPResponse := FSUT.handle(THTTPRequest.New.body(lBody).body);
+  lHTTPResponse := FMockSut.handle(THTTPRequest.New.body(lBody).body);
 
   Assert.IsTrue(lHTTPResponse.statusCode.ToString.Equals('400'),
     'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''email''');
@@ -66,7 +67,7 @@ begin
     .AddPair('email', 'any_email') //
     .AddPair('passwordConfirmation', 'any_password');
 
-  lHTTPResponse := FSUT.handle(THTTPRequest.New.body(lBody).body);
+  lHTTPResponse := FMockSut.handle(THTTPRequest.New.body(lBody).body);
 
   Assert.IsTrue(lHTTPResponse.statusCode.ToString.Equals('400'),
     'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''password''');
@@ -79,23 +80,39 @@ begin
     .AddPair('email', 'any_email') //
     .AddPair('password', 'any_password');
 
-  lHTTPResponse := FSUT.handle(THTTPRequest.New.body(lBody).body);
+  lHTTPResponse := FMockSut.handle(THTTPRequest.New.body(lBody).body);
 
   Assert.IsTrue(lHTTPResponse.statusCode.ToString.Equals('400'),
     'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''passwordConfirmation''');
-  Assert.IsTrue(lHTTPResponse.body.GetValue('error')
-    .Value.Equals('Missing param: passwordConfirmation'),
+
+  Assert.IsTrue(lHTTPResponse.body.Value.Equals
+    (TMissingParamError.New('passwordConfirmatin').GetBody.Value),
     'Deve retornar o error ''Missing param: password'' ao verificar ausência do paramêtro ''passwordConfirmation''');
+
+  // lBody := TJSONObject.Create //
+  // .AddPair('name', 'any_name') //
+  // .AddPair('email', 'ivalid_email@email.com') //
+  // .AddPair('password', 'any_password') //
+  // .AddPair('passwordConfirmation', 'any_password');
+  //
+  // lHTTPResponse := FMockSut.handle(THTTPRequest.New.body(lBody).body);
+  //
+  // Assert.IsTrue(lHTTPResponse.statusCode.ToString.Equals('400'),
+  // 'Deve retornar o StatusCode 400 se o email passado for inválido');
+  //
+  // Assert.IsTrue(lHTTPResponse.body.GetValue('error')
+  // .Value.Equals('Missing param: passwordConfirmation'),
+  // 'Deve retornar o error ''Missing param: password'' ao verificar ausência do paramêtro ''passwordConfirmation''');
 end;
 
 procedure TSignupTest.Setup;
 begin
-  FSUT := TSignupController.Create;
+  FMockSut := TSignupController.Create;
 end;
 
 procedure TSignupTest.TearDown;
 begin
-  FreeAndNil(FSUT);
+  //
 end;
 
 initialization
