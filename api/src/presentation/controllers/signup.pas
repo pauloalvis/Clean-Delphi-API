@@ -16,12 +16,23 @@ type
 
 implementation
 
-function TSignupController.handle(const httpRequest: TJSONObject): IHttpResponse;
+function TSignupController.handle(const httpRequest: TJSONObject)
+  : IHttpResponse;
+const
+  requiredFields: TArray<String> = ['name', 'email'];
+
+var
+  lField: String;
 begin
-  if not(Assigned(httpRequest.FindValue('name'))) then
-    result := badRequest(TMissingParamError.New('name').GetBody)
-  else if not(Assigned(httpRequest.FindValue('email'))) then
-    result := badRequest(TMissingParamError.New('email').GetBody);
+  for lField in requiredFields do
+  begin
+    if not(Assigned(httpRequest.FindValue(lField))) then
+    begin
+      result := badRequest(TMissingParamError.New(lField).GetBody);
+
+      Break;
+    end;
+  end;
 end;
 
 end.
