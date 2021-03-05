@@ -1,0 +1,11 @@
+{
+	"name": "api_test",
+	"description": "",
+	"version": "1.0.0",
+	"homepage": "",
+	"mainsrc": "./",
+	"projects": [],
+	"dependencies": {
+		"https://github.com/vsofttechnologies/delphi-mocks": "^v0.0.2"
+	}
+}

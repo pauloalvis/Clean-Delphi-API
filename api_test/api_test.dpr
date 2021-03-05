@@ -18,7 +18,9 @@ uses
   http in '..\api\src\presentation\protocols\http.pas',
   error in '..\api\src\presentation\errors\error.pas',
   http_helpers in '..\api\src\presentation\helpers\http_helpers.pas',
-  controller in '..\api\src\presentation\protocols\controller.pas';
+  controller in '..\api\src\presentation\protocols\controller.pas',
+  invalid_param_error in '..\api\src\presentation\errors\invalid_param_error.pas',
+  email_validator in '..\api\src\presentation\protocols\email_validator.pas';
 
 var
   runner: ITestRunner;

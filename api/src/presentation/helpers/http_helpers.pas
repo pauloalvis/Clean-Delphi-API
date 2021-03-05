@@ -8,7 +8,6 @@ uses
   http;
 
 function badRequest(const AError: TJSONObject): IHttpResponse;
-function ok: IHttpResponse;
 
 implementation
 
@@ -17,12 +16,6 @@ begin
   result := THttpResponse.New //
     .statusCode(400) //
     .body(AError);
-end;
-
-function ok: IHttpResponse;
-begin
-  result := THttpResponse.New //
-    .statusCode(200);
 end;
 
 end.
