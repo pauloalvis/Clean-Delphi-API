@@ -27,8 +27,7 @@ uses
 
 constructor TInvalidParamError.Create(const AParamName: String);
 begin
-  FBody := TJSONObject.Create.AddPair('error', format('Invalid param: %s',
-    [AParamName]));
+  FBody := TJSONObject.Create.AddPair('error', format('Invalid param: %s', [AParamName]));
 end;
 
 function TInvalidParamError.Body: TJSONObject;

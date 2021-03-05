@@ -10,7 +10,9 @@ uses
   error in 'src\presentation\errors\error.pas',
   http in 'src\presentation\protocols\http.pas',
   http_helpers in 'src\presentation\helpers\http_helpers.pas',
-  controller in 'src\presentation\protocols\controller.pas';
+  controller in 'src\presentation\protocols\controller.pas',
+  email_validator in 'src\presentation\protocols\email_validator.pas',
+  invalid_param_error in 'src\presentation\errors\invalid_param_error.pas';
 
 type
   TCliente = class

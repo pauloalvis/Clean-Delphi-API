@@ -19,10 +19,11 @@ type
   [TestFixture]
   TSignupTest = class(TObject)
   private
-    FBody: TJsonObject;
     FMockSut: IController;
     FHTTPRequest: IHttpRequest;
     FHTTPResponse: IHttpResponse;
+
+    procedure AssertResponseMissinParam(const AParamName: String);
   public
     [Setup]
     procedure Setup;
@@ -38,7 +39,6 @@ type
     procedure MissingParamPasswordConfirmation;
     [Test]
     procedure InvalidParamErrorEmail;
-
   end;
 
 implementation
@@ -61,16 +61,8 @@ begin
 
   FHTTPResponse := FMockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'),
-    'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''email''');
-
-  FBody := TMissingParamError.new('email').body;
-  try
-    Assert.IsTrue(FHTTPResponse.body.Value.Equals(FBody.Value),
-      'Deve retornar o error ''Missing param: email'' ao verificar ausência do paramêtro ''email''');
-  finally
-    FBody.DisposeOf;
-  end;
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''email''');
+  AssertResponseMissinParam('email');
 end;
 
 procedure TSignupTest.MissingParamName;
@@ -83,16 +75,8 @@ begin
 
   FHTTPResponse := FMockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'),
-    'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''name''');
-
-  FBody := TMissingParamError.new('name').body;
-  try
-    Assert.IsTrue(FHTTPResponse.body.Value.Equals(FBody.Value),
-      'Deve retornar o error ''Missing param: name'' ao verificar ausência do paramêtro ''name''');
-  finally
-    FBody.DisposeOf;
-  end;
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''name''');
+  AssertResponseMissinParam('name');
 end;
 
 procedure TSignupTest.MissingParamPassword;
@@ -105,16 +89,8 @@ begin
 
   FHTTPResponse := FMockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'),
-    'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''password''');
-
-  FBody := TMissingParamError.new('password').body;
-  try
-    Assert.IsTrue(FHTTPResponse.body.Value.Equals(FBody.Value),
-      'Deve retornar o error ''Missing param: password'' ao verificar ausência do paramêtro ''password''');
-  finally
-    FBody.DisposeOf;
-  end;
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''password''');
+  AssertResponseMissinParam('password');
 end;
 
 procedure TSignupTest.MissingParamPasswordConfirmation;
@@ -127,16 +103,8 @@ begin
 
   FHTTPResponse := FMockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'),
-    'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''passwordConfirmation''');
-
-  FBody := TMissingParamError.new('passwordConfirmatin').body;
-  try
-    Assert.IsTrue(FHTTPResponse.body.Value.Equals(FBody.Value),
-      'Deve retornar o error ''Missing param: passwordConfirmatin'' ao verificar ausência do paramêtro ''passwordConfirmatin''');
-  finally
-    FBody.DisposeOf;
-  end;
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''passwordConfirmation''');
+  AssertResponseMissinParam('passwordConfirmation');
 end;
 
 procedure TSignupTest.Setup;
@@ -160,28 +128,21 @@ begin
 
   FHTTPResponse := FMockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'),
-    'Deve retornar o StatusCode 400 se o email informado é inválido');
-
-  FBody := TInvalidParamError.new('email').body;
-  try
-
-    showmessage( FHTTPResponse.body.Value);
-
-    showmessage(FBody.Value);
-
-
-    Assert.IsTrue(FHTTPResponse.body.Value.Equals(FBody.Value),
-      'Deve retornar o error ''Invalid param: email'' email invalid');
-  finally
-    FBody.DisposeOf;
-  end;
-
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 se o email informado for inválido');
+  Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Invalid param: email"}'), format('Deve retornar %s, valor retornado %s', [FHTTPResponse.body.ToJSON, '{"error":"Invalid param: email"}']));
 end;
 
 function TEmailValidatorStub.isValid(const email: String): Boolean;
 begin
   result := false;
+end;
+
+procedure TSignupTest.AssertResponseMissinParam(const AParamName: String);
+var
+  lResponseJson: String;
+begin
+  lResponseJson := format('{"error":"Missing param: %s"}', [AParamName]);
+  Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals(lResponseJson), format('Deve retornar %s, valor retornado %s', [FHTTPResponse.body.ToJSON, lResponseJson]));
 end;
 
 initialization

@@ -6,9 +6,10 @@ uses
   system.json,
 
   http,
+  controller,
   http_helpers,
-  missing_param_error,
-  controller, email_validator;
+  email_validator,
+  missing_param_error;
 
 type
   TSignupController = class(TInterfacedObject, IController)
@@ -27,14 +28,13 @@ begin
   FEmailValidator := AEmailValidator;
 end;
 
-function TSignupController.handle(const httpRequest: IHttpRequest)
-  : IHttpResponse;
-const
-  requiredFields: TArray<String> = ['name', 'email', 'password',
-    'passwordConfirmation'];
+function TSignupController.handle(const httpRequest: IHttpRequest): IHttpResponse;
 var
   lField: String;
   isEmailValid: Boolean;
+
+const
+  requiredFields: TArray<String> = ['name', 'email', 'password', 'passwordConfirmation'];
 begin
   for lField in requiredFields do
   begin
@@ -45,9 +45,7 @@ begin
     end;
   end;
 
-  isEmailValid := self.FEmailValidator.isValid
-    (httpRequest.body.GetValue('email').Value);
-
+  isEmailValid := self.FEmailValidator.isValid(httpRequest.body.GetValue('email').Value);
   if not(isEmailValid) then
     result := badRequest(TInvalidParamError.New('email').body);
 
