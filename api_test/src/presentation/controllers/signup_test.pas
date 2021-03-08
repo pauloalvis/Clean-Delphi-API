@@ -9,17 +9,37 @@ uses
   http,
   signup,
   controller,
+  delphi.mocks,
   email_validator;
 
 type
+
   TEmailValidatorStub = class(TInterfacedObject, IEmailValidator)
     function isValid(const email: String): Boolean;
+  end;
+
+  ITypeSut = interface
+    ['{6B289352-E5CA-4F63-845F-523EC2A99E86}']
+    function MockSut: IController;
+    function EmailValidator: TMock<IEmailValidator>;
+  end;
+
+  TTypeSut = class(TInterfacedObject, ITypeSut)
+  private
+    FMockSut: TSignupController;
+    FEmailValidator: TMock<IEmailValidator>;
+
+    function MockSut: IController;
+    function EmailValidator: TMock<IEmailValidator>;
+
+    constructor Create;
+  private
+    class function New: ITypeSut;
   end;
 
   [TestFixture]
   TSignupTest = class(TObject)
   private
-    FMockSut: IController;
     FHTTPRequest: IHttpRequest;
     FHTTPResponse: IHttpResponse;
 
@@ -49,17 +69,18 @@ uses
   System.SysUtils,
 
   missing_param_error,
-  invalid_param_error;
+  invalid_param_error,
+  System.Rtti;
 
 procedure TSignupTest.MissingParamEmail;
 begin
-  FHTTPRequest := THttpRequest.new //
+  FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'any_name') //
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  FHTTPResponse := FMockSut.handle(FHTTPRequest);
+  FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''email''');
   AssertResponseMissinParam('email');
@@ -67,13 +88,13 @@ end;
 
 procedure TSignupTest.MissingParamName;
 begin
-  FHTTPRequest := THttpRequest.new //
+  FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('email', 'any_email2hotmail.com') //
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  FHTTPResponse := FMockSut.handle(FHTTPRequest);
+  FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''name''');
   AssertResponseMissinParam('name');
@@ -81,13 +102,13 @@ end;
 
 procedure TSignupTest.MissingParamPassword;
 begin
-  FHTTPRequest := THttpRequest.new //
+  FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'any_name') //
     .AddPair('email', 'any_email') //
     .AddPair('passwordConfirmation', 'any_passwordConfirmation'));
 
-  FHTTPResponse := FMockSut.handle(FHTTPRequest);
+  FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''password''');
   AssertResponseMissinParam('password');
@@ -95,13 +116,13 @@ end;
 
 procedure TSignupTest.MissingParamPasswordConfirmation;
 begin
-  FHTTPRequest := THttpRequest.new //
+  FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'any_name') //
     .AddPair('email', 'any_email') //
     .AddPair('password', 'any_password'));
 
-  FHTTPResponse := FMockSut.handle(FHTTPRequest);
+  FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''passwordConfirmation''');
   AssertResponseMissinParam('passwordConfirmation');
@@ -109,7 +130,7 @@ end;
 
 procedure TSignupTest.Setup;
 begin
-  FMockSut := TSignupController.Create(TEmailValidatorStub.Create);
+  //
 end;
 
 procedure TSignupTest.TearDown;
@@ -118,15 +139,20 @@ begin
 end;
 
 procedure TSignupTest.InvalidParamErrorEmail;
+var
+  lTypeSut: ITypeSut;
 begin
-  FHTTPRequest := THttpRequest.new //
+  lTypeSut := TTypeSut.New;
+  lTypeSut.EmailValidator.Setup.WillReturn(false).When.isValid('invalid_email.com');
+
+  FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'any_name') //
-    .AddPair('email', 'invalid_email@email.com') //
+    .AddPair('email', 'invalid_email.com') //
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_passwordConfirmation'));
 
-  FHTTPResponse := FMockSut.handle(FHTTPRequest);
+  FHTTPResponse := lTypeSut.MockSut.handle(FHTTPRequest);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 se o email informado for inválido');
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Invalid param: email"}'), format('Deve retornar %s, valor retornado %s', [FHTTPResponse.body.ToJSON, '{"error":"Invalid param: email"}']));
@@ -134,7 +160,7 @@ end;
 
 function TEmailValidatorStub.isValid(const email: String): Boolean;
 begin
-  result := false;
+  result := true;
 end;
 
 procedure TSignupTest.AssertResponseMissinParam(const AParamName: String);
@@ -143,6 +169,27 @@ var
 begin
   lResponseJson := format('{"error":"Missing param: %s"}', [AParamName]);
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals(lResponseJson), format('Deve retornar %s, valor retornado %s', [FHTTPResponse.body.ToJSON, lResponseJson]));
+end;
+
+constructor TTypeSut.Create;
+begin
+  FEmailValidator := TMock<IEmailValidator>.Create;
+  FMockSut := TSignupController.Create(FEmailValidator);
+end;
+
+function TTypeSut.EmailValidator: TMock<IEmailValidator>;
+begin
+  result := FEmailValidator;
+end;
+
+function TTypeSut.MockSut: IController;
+begin
+  result := FMockSut;
+end;
+
+class function TTypeSut.New: ITypeSut;
+begin
+  result := TTypeSut.Create;
 end;
 
 initialization

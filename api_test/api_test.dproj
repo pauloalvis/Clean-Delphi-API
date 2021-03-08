@@ -45,7 +45,7 @@
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
-        <DCC_UnitSearchPath>$(DUnitX);modules\.dcp;modules\.dcu;modules;modules\delphi-mocks\Examples;modules\delphi-mocks\Source;modules\delphi-mocks\Tests;modules\delphi-mocks\Tests\MemoryLeakTest;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>$(DUnitX);$(DCC_UnitSearchPath);modules\.dcp;modules\.dcu;modules;modules\delphi-mocks\Examples;modules\delphi-mocks\Source;modules\delphi-mocks\Tests;modules\delphi-mocks\Tests\MemoryLeakTest</DCC_UnitSearchPath>
         <SanitizedProjectName>api_test</SanitizedProjectName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
