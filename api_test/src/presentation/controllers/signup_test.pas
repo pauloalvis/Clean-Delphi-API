@@ -59,6 +59,8 @@ type
     procedure MissingParamPasswordConfirmation;
     [Test]
     procedure InvalidParamErrorEmail;
+    [Test]
+    procedure ShouldAllEmailValidatorWithCorrectEmail;
   end;
 
 implementation
@@ -131,6 +133,31 @@ end;
 procedure TSignupTest.Setup;
 begin
   //
+end;
+
+procedure TSignupTest.ShouldAllEmailValidatorWithCorrectEmail;
+var
+  lTypeSut: ITypeSut;
+begin
+  lTypeSut := TTypeSut.New;
+  lTypeSut.EmailValidator.Setup.WillReturnDefault('isValid', true);
+
+  // lTypeSut.EmailValidator.Setup.WillReturn(false).When.isValid('any_email.com');
+
+  FHTTPRequest := THttpRequest.New //
+    .body(TJsonObject.Create //
+    .AddPair('name', 'any_name') //
+    .AddPair('email', 'any_email.com') //
+    .AddPair('password', 'any_password') //
+    .AddPair('passwordConfirmation', 'any_passwordConfirmation'));
+
+  lTypeSut.MockSut.handle(FHTTPRequest);
+
+  // FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
+
+  Assert.IsTrue(lTypeSut.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com'));
+
+  // Assert.IsTrue(, 'sdasd');
 end;
 
 procedure TSignupTest.TearDown;
