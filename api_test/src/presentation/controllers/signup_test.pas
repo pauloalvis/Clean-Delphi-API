@@ -170,7 +170,7 @@ var
   lTypeSut: ITypeSut;
 begin
   lTypeSut := TTypeSut.New;
-  lTypeSut.EmailValidator.Setup.WillReturn(false).When.isValid('invalid_email.com');
+  lTypeSut.EmailValidator.Setup.WillReturnDefault('isValid', false);
 
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
