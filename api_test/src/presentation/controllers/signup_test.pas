@@ -8,6 +8,7 @@ uses
 
   http,
   signup,
+  server_error,
   controller,
   delphi.mocks,
   email_validator;
@@ -45,22 +46,20 @@ type
 
     procedure AssertResponseMissinParam(const AParamName: String);
   public
-    [Setup]
-    procedure Setup;
-    [TearDown]
-    procedure TearDown;
-    [Test]
+    // [Test]
     procedure MissingParamName;
-    [Test]
+    // [Test]
     procedure MissingParamEmail;
-    [Test]
+    // [Test]
     procedure MissingParamPassword;
-    [Test]
+    // [Test]
     procedure MissingParamPasswordConfirmation;
-    [Test]
+    // [Test]
     procedure InvalidParamErrorEmail;
-    [Test]
+    // [Test]
     procedure ShouldAllEmailValidatorWithCorrectEmail;
+    [Test]
+    procedure ShouldReturnError500IfEmailValidatorThrows;
   end;
 
 implementation
@@ -130,11 +129,6 @@ begin
   AssertResponseMissinParam('passwordConfirmation');
 end;
 
-procedure TSignupTest.Setup;
-begin
-  //
-end;
-
 procedure TSignupTest.ShouldAllEmailValidatorWithCorrectEmail;
 var
   lTypeSut: ITypeSut;
@@ -156,9 +150,26 @@ begin
   lTypeSut.EmailValidator.Verify('Deve chamar isValid com o parâmetro email: any_email.com');
 end;
 
-procedure TSignupTest.TearDown;
+procedure TSignupTest.ShouldReturnError500IfEmailValidatorThrows;
+var
+  lTypeSut: ITypeSut;
 begin
-  //
+  lTypeSut := TTypeSut.New;
+  lTypeSut.EmailValidator.Setup.WillRaise(TServerError, 'ytututyu').When.isValid('any_email.com');
+
+  // lTypeSut.EmailValidator.Setup.WillRaise('isValid', false);
+
+  FHTTPRequest := THttpRequest.New //
+    .body(TJsonObject.Create //
+    .AddPair('name', 'any_name') //
+    .AddPair('email', 'any_email.com') //
+    .AddPair('password', 'any_password') //
+    .AddPair('passwordConfirmation', 'any_passwordConfirmation'));
+
+ FHTTPResponse := lTypeSut.MockSut.handle(FHTTPRequest);
+
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('500'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''passwordConfirmation''');
+  AssertResponseMissinParam('passwordConfirmation');
 end;
 
 procedure TSignupTest.InvalidParamErrorEmail;

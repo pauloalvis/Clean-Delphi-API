@@ -7,6 +7,7 @@ uses
 
   http,
   controller,
+  server_error,
   http_helpers,
   email_validator,
   missing_param_error;
@@ -21,7 +22,8 @@ type
 implementation
 
 uses
-  invalid_param_error;
+  invalid_param_error,
+  system.SysUtils;
 
 constructor TSignupController.Create(AEmailValidator: IEmailValidator);
 begin
@@ -36,18 +38,28 @@ var
 const
   requiredFields: TArray<String> = ['name', 'email', 'password', 'passwordConfirmation'];
 begin
-  for lField in requiredFields do
-  begin
-    if not(Assigned(httpRequest.body.GetValue(lField))) then
+  try
+    for lField in requiredFields do
     begin
-      result := badRequest(TMissingParamError.New(lField).body);
-      exit;
+      if not(Assigned(httpRequest.body.GetValue(lField))) then
+      begin
+        result := badRequest(TMissingParamError.New(lField).body);
+        exit;
+      end;
     end;
-  end;
 
-  isEmailValid := self.FEmailValidator.isValid(httpRequest.body.GetValue('email').Value);
-  if not(isEmailValid) then
-    result := badRequest(TInvalidParamError.New('email').body);
+    isEmailValid := self.FEmailValidator.isValid(httpRequest.body.GetValue('email').Value);
+    if not(isEmailValid) then
+      result := badRequest(TInvalidParamError.New('email').body);
+
+  except
+    on E: Exception do
+
+      result := THttpResponse.New //
+        .statusCode(500) //
+        .body(TServerError.New.body);
+
+  end;
 
 end;
 

@@ -7,9 +7,9 @@ program api_test;
 
 uses
   System.SysUtils,
-{$IFDEF TESTINSIGHT}
+  {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX,
-{$ENDIF }
+  {$ENDIF }
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
@@ -21,7 +21,8 @@ uses
   http_helpers in '..\api\src\presentation\helpers\http_helpers.pas',
   controller in '..\api\src\presentation\protocols\controller.pas',
   invalid_param_error in '..\api\src\presentation\errors\invalid_param_error.pas',
-  email_validator in '..\api\src\presentation\protocols\email_validator.pas';
+  email_validator in '..\api\src\presentation\protocols\email_validator.pas',
+  server_error in '..\api\src\presentation\errors\server_error.pas';
 
 var
   runner: ITestRunner;
