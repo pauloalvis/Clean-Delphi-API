@@ -46,17 +46,17 @@ type
 
     procedure AssertResponseMissinParam(const AParamName: String);
   public
-    // [Test]
+    [Test]
     procedure MissingParamName;
-    // [Test]
+    [Test]
     procedure MissingParamEmail;
-    // [Test]
+    [Test]
     procedure MissingParamPassword;
-    // [Test]
+    [Test]
     procedure MissingParamPasswordConfirmation;
-    // [Test]
+    [Test]
     procedure InvalidParamErrorEmail;
-    // [Test]
+    [Test]
     procedure ShouldAllEmailValidatorWithCorrectEmail;
     [Test]
     procedure ShouldReturnError500IfEmailValidatorThrows;
@@ -156,11 +156,7 @@ var
 begin
   lTypeSut := TTypeSut.New;
 
-  lTypeSut.EmailValidator.Setup.WillRaise('isValid', TServerError);
-
-  // lTypeSut.EmailValidator.Setup.WillRaise(TServerError, 'ytututyu').When.isValid('any_email.com');
-
-  // lTypeSut.EmailValidator.Setup.WillRaise('isValid', false);
+  lTypeSut.EmailValidator.Setup.WillRaise('isValid', EMockException);
 
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //

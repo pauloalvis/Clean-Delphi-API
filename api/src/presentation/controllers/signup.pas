@@ -53,14 +53,10 @@ begin
       result := badRequest(TInvalidParamError.New('email').body);
 
   except
-    on E: Exception do
-
-      result := THttpResponse.New //
-        .statusCode(500) //
-        .body(TServerError.New.body);
-
+    result := THttpResponse.New //
+      .statusCode(500) //
+      .body(TServerError.New.body);
   end;
-
 end;
 
 end.
