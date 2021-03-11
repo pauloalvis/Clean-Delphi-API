@@ -6,6 +6,7 @@ uses
   account;
 
 type
+{$M+}
 
   IAddAccountModel = interface
     ['{F54BD6F9-0516-4DB6-A564-2224F5748874}']
@@ -23,6 +24,8 @@ type
     ['{3212DFB8-7B72-4406-895A-290E85CA7001}']
     function add(const account: IAddAccountModel): IAccountModel;
   end;
+
+{$M-}
 
 implementation
 

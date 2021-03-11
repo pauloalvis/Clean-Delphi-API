@@ -30,8 +30,8 @@ type
     FAddAccount: TMock<IAddAccount>;
 
     function MockSut: IController;
-    function EmailValidator: TMock<IEmailValidator>;
     function AddAccount: TMock<IAddAccount>;
+    function EmailValidator: TMock<IEmailValidator>;
 
     constructor Create;
   private
@@ -43,6 +43,10 @@ type
   private
     FHTTPRequest: IHttpRequest;
     FHTTPResponse: IHttpResponse;
+
+    function MakeSut: ITypeSut;
+    function MakeSutWithInvalidEmail: ITypeSut;
+    function MakeSutWithEmailValidatorThrows: ITypeSut;
 
     procedure AssertResponseMissinParam(const AParamName: String);
   public
@@ -59,7 +63,7 @@ type
     [Test]
     procedure InvalidParamErrorEmail;
     [Test]
-    procedure ShouldAllEmailValidatorWithCorrectEmail;
+    procedure ShouldCallEmailValidatorWithCorrectEmail;
     [Test]
     procedure ShouldReturnError500IfEmailValidatorThrows;
     [Test]
@@ -77,6 +81,23 @@ uses
   invalid_param_error,
   System.Rtti;
 
+function TSignupTest.MakeSut: ITypeSut;
+begin
+  result := TTypeSut.New;
+end;
+
+function TSignupTest.MakeSutWithEmailValidatorThrows: ITypeSut;
+begin
+  result := MakeSut;
+  result.EmailValidator.Setup.WillRaise('isValid', EMockException);
+end;
+
+function TSignupTest.MakeSutWithInvalidEmail: ITypeSut;
+begin
+  result := MakeSut;
+  result.EmailValidator.Setup.WillReturnDefault('isValid', false);
+end;
+
 procedure TSignupTest.MissingParamEmail;
 begin
   FHTTPRequest := THttpRequest.New //
@@ -85,9 +106,9 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSut.MockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''email''');
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Should return: StatusCode 400');
   AssertResponseMissinParam('email');
 end;
 
@@ -99,9 +120,9 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSut.MockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''name''');
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Should return: StatusCode 400');
   AssertResponseMissinParam('name');
 end;
 
@@ -113,9 +134,9 @@ begin
     .AddPair('email', 'any_email') //
     .AddPair('passwordConfirmation', 'any_passwordConfirmation'));
 
-  FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSut.MockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''password''');
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Should return: StatusCode 400');
   AssertResponseMissinParam('password');
 end;
 
@@ -127,36 +148,30 @@ begin
     .AddPair('email', 'any_email') //
     .AddPair('password', 'any_password'));
 
-  FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSut.MockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 ao verificar ausência do paramêtro ''passwordConfirmation''');
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Should return: StatusCode 400');
   AssertResponseMissinParam('passwordConfirmation');
 end;
 
 procedure TSignupTest.PasswordConfirmationFails;
 begin
   FHTTPRequest := THttpRequest.New //
-
     .body(TJsonObject.Create //
     .AddPair('name', 'any_name') //
     .AddPair('email', 'any_email') //
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'invalid_passwordConfirmation'));
 
-  FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSut.MockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 se o passwordConfirmation informado for inválido');
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Should return: StatusCode 400');
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Invalid param: passwordConfirmation"}'),
     format('Deve retornar %s, valor retornado %s', [FHTTPResponse.body.ToJSON, '{"error":"Invalid param: passwordConfirmation"}']));
 end;
 
-procedure TSignupTest.ShouldAllEmailValidatorWithCorrectEmail;
-var
-  lTypeSut: ITypeSut;
+procedure TSignupTest.ShouldCallEmailValidatorWithCorrectEmail;
 begin
-  lTypeSut := TTypeSut.New;
-  lTypeSut.EmailValidator.Setup.WillReturnDefault('isValid', false);
-
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'any_name') //
@@ -164,11 +179,11 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  lTypeSut.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com');
+  MakeSutWithInvalidEmail.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com');
 
-  lTypeSut.MockSut.handle(FHTTPRequest);
+  MakeSutWithInvalidEmail.MockSut.handle(FHTTPRequest);
 
-  lTypeSut.EmailValidator.Verify('Deve chamar isValid com o parâmetro email: any_email.com');
+  MakeSutWithInvalidEmail.EmailValidator.Verify('Should Call ''isValid'' with correct email');
 end;
 
 procedure TSignupTest.ShouldCallAddAccountWithCorrectValues;
@@ -177,12 +192,7 @@ begin
 end;
 
 procedure TSignupTest.ShouldReturnError500IfEmailValidatorThrows;
-var
-  lTypeSut: ITypeSut;
 begin
-  lTypeSut := TTypeSut.New;
-  lTypeSut.EmailValidator.Setup.WillRaise('isValid', EMockException);
-
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'any_name') //
@@ -190,19 +200,14 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  FHTTPResponse := lTypeSut.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSutWithEmailValidatorThrows.MockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('500'), 'Deve retornar o StatusCode 500 ao ocorrer uma exception no server');
-  Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Internal Server Error"}'), 'Deve retornar {"error":"Internal Server Error"}');
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('500'), 'Shoud return: StatusCode500');
+  Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Internal Server Error "}'), 'Shoud return: {"error":"Internal Server Error"}');
 end;
 
 procedure TSignupTest.InvalidParamErrorEmail;
-var
-  lTypeSut: ITypeSut;
 begin
-  lTypeSut := TTypeSut.New;
-  lTypeSut.EmailValidator.Setup.WillReturnDefault('isValid', false);
-
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'any_name') //
@@ -210,10 +215,10 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  FHTTPResponse := lTypeSut.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSutWithInvalidEmail.MockSut.handle(FHTTPRequest);
 
-  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 se o email informado for inválido');
-  Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Invalid param: email"}'), format('Deve retornar %s, valor retornado %s', [FHTTPResponse.body.ToJSON, '{"error":"Invalid param: email"}']));
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Should return: StatusCode 400');
+  Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Invalid param: email"}'), format('Should return %s, valor retornado %s', [FHTTPResponse.body.ToJSON, '{"error":"Invalid param: email"}']));
 end;
 
 procedure TSignupTest.AssertResponseMissinParam(const AParamName: String);
@@ -221,7 +226,7 @@ var
   lResponseJson: String;
 begin
   lResponseJson := format('{"error":"Missing param: %s"}', [AParamName]);
-  Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals(lResponseJson), format('Deve retornar %s, valor retornado %s', [FHTTPResponse.body.ToJSON, lResponseJson]));
+  Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals(lResponseJson), format('Should return: %s, value returned %s', [FHTTPResponse.body.ToJSON, lResponseJson]));
 end;
 
 function TTypeSut.AddAccount: TMock<IAddAccount>;
