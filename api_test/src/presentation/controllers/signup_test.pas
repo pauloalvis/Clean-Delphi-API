@@ -12,14 +12,10 @@ uses
   controller,
   delphi.mocks,
   email_validator,
-  add_account;
+  add_account,
+  account;
 
 type
-
-  TEmailValidatorStub = class(TInterfacedObject, IEmailValidator)
-    function isValid(const email: String): Boolean;
-  end;
-
   ITypeSut = interface
     ['{6B289352-E5CA-4F63-845F-523EC2A99E86}']
     function MockSut: IController;
@@ -35,7 +31,7 @@ type
 
     function MockSut: IController;
     function EmailValidator: TMock<IEmailValidator>;
-    function AddAccount: TMock<IEmailValidator>;
+    function AddAccount: TMock<IAddAccount>;
 
     constructor Create;
   private
@@ -220,17 +216,17 @@ begin
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Invalid param: email"}'), format('Deve retornar %s, valor retornado %s', [FHTTPResponse.body.ToJSON, '{"error":"Invalid param: email"}']));
 end;
 
-function TEmailValidatorStub.isValid(const email: String): Boolean;
-begin
-  result := true;
-end;
-
 procedure TSignupTest.AssertResponseMissinParam(const AParamName: String);
 var
   lResponseJson: String;
 begin
   lResponseJson := format('{"error":"Missing param: %s"}', [AParamName]);
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals(lResponseJson), format('Deve retornar %s, valor retornado %s', [FHTTPResponse.body.ToJSON, lResponseJson]));
+end;
+
+function TTypeSut.AddAccount: TMock<IAddAccount>;
+begin
+  result := FAddAccount;
 end;
 
 constructor TTypeSut.Create;
