@@ -90,6 +90,8 @@
         <DCCReference Include="..\api\src\presentation\errors\invalid_param_error.pas"/>
         <DCCReference Include="..\api\src\presentation\protocols\email_validator.pas"/>
         <DCCReference Include="..\api\src\presentation\errors\server_error.pas"/>
+        <DCCReference Include="..\api\src\domain\usecases\add_account.pas"/>
+        <DCCReference Include="..\api\src\domain\models\account.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

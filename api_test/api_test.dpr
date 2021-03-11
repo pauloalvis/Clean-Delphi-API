@@ -22,7 +22,9 @@ uses
   controller in '..\api\src\presentation\protocols\controller.pas',
   invalid_param_error in '..\api\src\presentation\errors\invalid_param_error.pas',
   email_validator in '..\api\src\presentation\protocols\email_validator.pas',
-  server_error in '..\api\src\presentation\errors\server_error.pas';
+  server_error in '..\api\src\presentation\errors\server_error.pas',
+  add_account in '..\api\src\domain\usecases\add_account.pas',
+  account in '..\api\src\domain\models\account.pas';
 
 var
   runner: ITestRunner;

@@ -11,7 +11,8 @@ uses
   server_error,
   controller,
   delphi.mocks,
-  email_validator;
+  email_validator,
+  add_account;
 
 type
 
@@ -23,15 +24,18 @@ type
     ['{6B289352-E5CA-4F63-845F-523EC2A99E86}']
     function MockSut: IController;
     function EmailValidator: TMock<IEmailValidator>;
+    function AddAccount: TMock<IAddAccount>;
   end;
 
   TTypeSut = class(TInterfacedObject, ITypeSut)
   private
     FMockSut: TSignupController;
     FEmailValidator: TMock<IEmailValidator>;
+    FAddAccount: TMock<IAddAccount>;
 
     function MockSut: IController;
     function EmailValidator: TMock<IEmailValidator>;
+    function AddAccount: TMock<IEmailValidator>;
 
     constructor Create;
   private
@@ -62,6 +66,8 @@ type
     procedure ShouldAllEmailValidatorWithCorrectEmail;
     [Test]
     procedure ShouldReturnError500IfEmailValidatorThrows;
+    [Test]
+    procedure ShouldCallAddAccountWithCorrectValues;
   end;
 
 implementation
@@ -169,6 +175,11 @@ begin
   lTypeSut.EmailValidator.Verify('Deve chamar isValid com o parâmetro email: any_email.com');
 end;
 
+procedure TSignupTest.ShouldCallAddAccountWithCorrectValues;
+begin
+  //
+end;
+
 procedure TSignupTest.ShouldReturnError500IfEmailValidatorThrows;
 var
   lTypeSut: ITypeSut;
@@ -225,6 +236,8 @@ end;
 constructor TTypeSut.Create;
 begin
   FEmailValidator := TMock<IEmailValidator>.Create;
+  FAddAccount := TMock<IAddAccount>.Create;
+
   FMockSut := TSignupController.Create(FEmailValidator);
 end;
 
