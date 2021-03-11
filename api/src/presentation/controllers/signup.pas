@@ -34,27 +34,30 @@ function TSignupController.handle(const httpRequest: IHttpRequest): IHttpRespons
 var
   lField: String;
   isEmailValid: Boolean;
-
+  lBody: TJSONObject;
 const
   requiredFields: TArray<String> = ['name', 'email', 'password', 'passwordConfirmation'];
 begin
+  lBody := httpRequest.body;
+
   try
+
     for lField in requiredFields do
     begin
-      if not(Assigned(httpRequest.body.GetValue(lField))) then
+      if not(Assigned(lBody.GetValue(lField))) then
       begin
         result := badRequest(TMissingParamError.New(lField).body);
         exit;
       end;
     end;
 
-    if not(httpRequest.body.GetValue('password').Value.Equals(httpRequest.body.GetValue('passwordConfirmation').Value)) then
+    if not(lBody.GetValue('password').Value.Equals(lBody.GetValue('passwordConfirmation').Value)) then
     begin
       result := badRequest(TInvalidParamError.New('passwordConfirmation').body);
       exit;
     end;
 
-    isEmailValid := self.FEmailValidator.isValid(httpRequest.body.GetValue('email').Value);
+    isEmailValid := self.FEmailValidator.isValid(lBody.GetValue('email').Value);
     if not(isEmailValid) then
       result := badRequest(TInvalidParamError.New('email').body);
 
