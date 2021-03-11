@@ -5,20 +5,20 @@ interface
 uses
   System.Json,
 
-  System.SysUtils;
+  System.SysUtils,
+  error;
 
 type
 
-  TServerError = class(Exception)
+  TServerError = class(TInterfacedObject, IError)
   private
     FBody: TJSONObject;
 
     constructor Create;
+    function Body: TJSONObject;
 
   public
-
-    function Body: TJSONObject;
-    class function New: TServerError;
+    class function New: IError;
   end;
 
 implementation
@@ -33,7 +33,7 @@ begin
   result := FBody;
 end;
 
-class function TServerError.New: TServerError;
+class function TServerError.New: IError;
 begin
   result := self.Create;
 end;

@@ -48,6 +48,12 @@ begin
       end;
     end;
 
+    if not(httpRequest.body.GetValue('password').Value.Equals(httpRequest.body.GetValue('passwordConfirmation').Value)) then
+    begin
+      result := badRequest(TInvalidParamError.New('passwordConfirmation').body);
+      exit;
+    end;
+
     isEmailValid := self.FEmailValidator.isValid(httpRequest.body.GetValue('email').Value);
     if not(isEmailValid) then
       result := badRequest(TInvalidParamError.New('email').body);

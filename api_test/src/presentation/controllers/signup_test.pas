@@ -55,6 +55,8 @@ type
     [Test]
     procedure MissingParamPasswordConfirmation;
     [Test]
+    procedure PasswordConfirmationFails;
+    [Test]
     procedure InvalidParamErrorEmail;
     [Test]
     procedure ShouldAllEmailValidatorWithCorrectEmail;
@@ -129,6 +131,23 @@ begin
   AssertResponseMissinParam('passwordConfirmation');
 end;
 
+procedure TSignupTest.PasswordConfirmationFails;
+begin
+  FHTTPRequest := THttpRequest.New //
+
+    .body(TJsonObject.Create //
+    .AddPair('name', 'any_name') //
+    .AddPair('email', 'any_email') //
+    .AddPair('password', 'any_password') //
+    .AddPair('passwordConfirmation', 'invalid_passwordConfirmation'));
+
+  FHTTPResponse := TTypeSut.New.MockSut.handle(FHTTPRequest);
+
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Deve retornar o StatusCode 400 se o passwordConfirmation informado for inválido');
+  Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Invalid param: passwordConfirmation"}'),
+    format('Deve retornar %s, valor retornado %s', [FHTTPResponse.body.ToJSON, '{"error":"Invalid param: passwordConfirmation"}']));
+end;
+
 procedure TSignupTest.ShouldAllEmailValidatorWithCorrectEmail;
 var
   lTypeSut: ITypeSut;
@@ -141,7 +160,7 @@ begin
     .AddPair('name', 'any_name') //
     .AddPair('email', 'any_email.com') //
     .AddPair('password', 'any_password') //
-    .AddPair('passwordConfirmation', 'any_passwordConfirmation'));
+    .AddPair('passwordConfirmation', 'any_password'));
 
   lTypeSut.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com');
 
@@ -155,7 +174,6 @@ var
   lTypeSut: ITypeSut;
 begin
   lTypeSut := TTypeSut.New;
-
   lTypeSut.EmailValidator.Setup.WillRaise('isValid', EMockException);
 
   FHTTPRequest := THttpRequest.New //
@@ -163,7 +181,7 @@ begin
     .AddPair('name', 'any_name') //
     .AddPair('email', 'any_email.com') //
     .AddPair('password', 'any_password') //
-    .AddPair('passwordConfirmation', 'any_passwordConfirmation'));
+    .AddPair('passwordConfirmation', 'any_password'));
 
   FHTTPResponse := lTypeSut.MockSut.handle(FHTTPRequest);
 
@@ -183,7 +201,7 @@ begin
     .AddPair('name', 'any_name') //
     .AddPair('email', 'invalid_email.com') //
     .AddPair('password', 'any_password') //
-    .AddPair('passwordConfirmation', 'any_passwordConfirmation'));
+    .AddPair('passwordConfirmation', 'any_password'));
 
   FHTTPResponse := lTypeSut.MockSut.handle(FHTTPRequest);
 
