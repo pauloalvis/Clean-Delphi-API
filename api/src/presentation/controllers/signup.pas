@@ -10,13 +10,16 @@ uses
   server_error,
   http_helpers,
   email_validator,
-  missing_param_error;
+  missing_param_error,
+  add_account;
 
 type
   TSignupController = class(TInterfacedObject, IController)
     FEmailValidator: IEmailValidator;
+    FAddAccount: IAddAccount;
+
     function handle(const httpRequest: IHttpRequest): IHttpResponse;
-    constructor Create(AEmailValidator: IEmailValidator);
+    constructor Create(AEmailValidator: IEmailValidator; AAddAccount: IAddAccount);
   end;
 
 implementation
@@ -25,13 +28,15 @@ uses
   invalid_param_error,
   system.SysUtils;
 
-constructor TSignupController.Create(AEmailValidator: IEmailValidator);
+constructor TSignupController.Create(AEmailValidator: IEmailValidator; AAddAccount: IAddAccount);
 begin
   FEmailValidator := AEmailValidator;
+  FAddAccount := AAddAccount;
 end;
 
 function TSignupController.handle(const httpRequest: IHttpRequest): IHttpResponse;
 var
+  FAddAccountModel: IAddAccountModel;
   lField: String;
   isEmailValid: Boolean;
   lBody: TJSONObject;
@@ -61,6 +66,12 @@ begin
     if not(isEmailValid) then
       result := badRequest(TInvalidParamError.New('email').body);
 
+    FAddAccountModel := TAddAccountModel.New //
+      .name(lBody.GetValue('name').Value) //
+      .email(lBody.GetValue('email').Value) //
+      .password(lBody.GetValue('password').Value);
+
+    FAddAccount.add(FAddAccountModel);
   except
     result := THttpResponse.New //
       .statusCode(500) //
