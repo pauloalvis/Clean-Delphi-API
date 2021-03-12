@@ -13,7 +13,9 @@ uses
   controller in 'src\presentation\protocols\controller.pas',
   email_validator in 'src\presentation\protocols\email_validator.pas',
   invalid_param_error in 'src\presentation\errors\invalid_param_error.pas',
-  server_error in 'src\presentation\errors\server_error.pas';
+  server_error in 'src\presentation\errors\server_error.pas',
+  add_account in 'src\domain\usecases\add_account.pas',
+  account in 'src\domain\models\account.pas';
 
 type
   TCliente = class
