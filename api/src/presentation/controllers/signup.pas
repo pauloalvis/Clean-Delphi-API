@@ -11,6 +11,8 @@ uses
   http_helpers,
   email_validator,
   missing_param_error,
+
+  vcl.dialogs,
   add_account;
 
 type
@@ -64,18 +66,29 @@ begin
 
     isEmailValid := self.FEmailValidator.isValid(lBody.GetValue('email').Value);
     if not(isEmailValid) then
+    begin
       result := badRequest(TInvalidParamError.New('email').body);
+      exit;
+    end;
 
     FAddAccountModel := TAddAccountModel.New //
       .name(lBody.GetValue('name').Value) //
       .email(lBody.GetValue('email').Value) //
       .password(lBody.GetValue('password').Value);
 
-    FAddAccount.add(FAddAccountModel);
+    // FAddAccount.add(FAddAccountModel);
+
+    // except
   except
-    result := THttpResponse.New //
-      .statusCode(500) //
-      .body(TServerError.New.body);
+    on E: Exception do
+    begin
+      showmessage(E.ToString);
+
+      result := THttpResponse.New //
+        .statusCode(500) //
+        .body(TServerError.New.body);
+    end;
+
   end;
 end;
 

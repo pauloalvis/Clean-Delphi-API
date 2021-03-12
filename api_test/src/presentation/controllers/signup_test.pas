@@ -45,6 +45,8 @@ type
     FHTTPResponse: IHttpResponse;
 
     function MakeSut: ITypeSut;
+
+    function MakeSutWithValidEmail: ITypeSut;
     function MakeSutWithInvalidEmail: ITypeSut;
     function MakeSutWithEmailValidatorThrows: ITypeSut;
 
@@ -79,7 +81,9 @@ uses
 
   missing_param_error,
   invalid_param_error,
-  System.Rtti;
+  System.Rtti,
+  delphi.mocks.Interfaces,
+  delphi.mocks.Behavior;
 
 function TSignupTest.MakeSut: ITypeSut;
 begin
@@ -96,6 +100,13 @@ function TSignupTest.MakeSutWithInvalidEmail: ITypeSut;
 begin
   result := MakeSut;
   result.EmailValidator.Setup.WillReturnDefault('isValid', false);
+end;
+
+function TSignupTest.MakeSutWithValidEmail: ITypeSut;
+begin
+  result := MakeSut;
+  result.EmailValidator.Setup.WillReturnDefault('isValid', true);
+  result.AddAccount.Setup.WillReturnDefault('add', true);
 end;
 
 procedure TSignupTest.MissingParamEmail;
@@ -188,15 +199,12 @@ end;
 
 procedure TSignupTest.ShouldCallAddAccountWithCorrectValues;
 var
-  FIAddAccountModelSub: TMock<IAddAccountModel>;
-  FIAddAccountSub: TMock<IAddAccount>;
+  FAddAccountModel: IAddAccountModel;
 begin
-  FIAddAccountModelSub := TMock<IAddAccountModel>.Create;
-  FIAddAccountModelSub.Setup.WillReturnDefault('name', 'any_name');
-  FIAddAccountModelSub.Setup.WillReturnDefault('email', 'any_email');
-  FIAddAccountModelSub.Setup.WillReturnDefault('password', 'any_password');
-
-  FIAddAccountSub := TMock<IAddAccount>.Create;
+  FAddAccountModel := TAddAccountModel.New //
+    .name('any_name') //
+    .email('any_email.com') //
+    .password('any_password');
 
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
@@ -205,9 +213,11 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  MakeSutWithInvalidEmail.MockSut.handle(FHTTPRequest);
+  MakeSutWithInvalidEmail.AddAccount.Setup.Expect.Once.When.add(FAddAccountModel);
 
-  MakeSut.AddAccount.Setup.Expect.Once.When.add(FIAddAccountModelSub);
+  MakeSutWithValidEmail.MockSut.handle(FHTTPRequest);
+
+  MakeSutWithValidEmail.AddAccount.Verify('Should Call ''AddAccount.add'' with corrects params');
 end;
 
 procedure TSignupTest.ShouldReturnError500IfEmailValidatorThrows;
