@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<test-results name="C:\Clean-Delphi-API\api_test\exe\api_test.exe" total="1" errors="0" failures="0" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2021-03-12" time="2.066">
+<test-results name="C:\projetos\Clean-Delphi-API\api_test\exe\api_test.exe" total="1" errors="0" failures="0" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2021-03-13" time="5.492">
   <culture-info current-culture="en" current-uiculture="en" />
-  <test-suite type="Assembly" name="api_test.exe" executed="true" result="Success" success="True" time="2.066" asserts="0">
+  <test-suite type="Assembly" name="api_test.exe" executed="true" result="Success" success="True" time="5.492" asserts="0">
     <results>
-        <test-suite type="Namespace" name="signup_test" executed="true" result="Success" success="True" time="2.066" asserts="0" >
+        <test-suite type="Namespace" name="signup_test" executed="true" result="Success" success="True" time="5.491" asserts="0" >
           <results>
-              <test-suite type="Fixture" name="TSignupTest" executed="True" result="Success" success="True" time="2.066" >
+              <test-suite type="Fixture" name="TSignupTest" executed="True" result="Success" success="True" time="5.491" >
                 <results>
-                  <test-case name="ShouldCallAddAccountWithCorrectValues" executed="True" result="Success" success="True" time="2.077" asserts="0" />
+                  <test-case name="ShouldCallEmailValidatorWithCorrectEmail" executed="True" result="Success" success="True" time="5.497" asserts="0" />
                 </results>
               </test-suite>
           </results>

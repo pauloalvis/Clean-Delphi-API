@@ -64,11 +64,11 @@ type
     procedure PasswordConfirmationFails;
     // [Test]
     procedure InvalidParamErrorEmail;
-    // [Test]
+    [Test]
     procedure ShouldCallEmailValidatorWithCorrectEmail;
     // [Test]
     procedure ShouldReturnError500IfEmailValidatorThrows;
-    [Test]
+    // [Test]
     procedure ShouldCallAddAccountWithCorrectValues;
   end;
 
@@ -182,7 +182,11 @@ begin
 end;
 
 procedure TSignupTest.ShouldCallEmailValidatorWithCorrectEmail;
+var
+  lTypeSut: ITypeSut;
 begin
+  lTypeSut := MakeSutWithInvalidEmail;
+
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'any_name') //
@@ -190,11 +194,11 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  MakeSutWithInvalidEmail.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com');
+  lTypeSut.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com');
 
-  MakeSutWithInvalidEmail.MockSut.handle(FHTTPRequest);
+  lTypeSut.MockSut.handle(FHTTPRequest);
 
-  MakeSutWithInvalidEmail.EmailValidator.Verify('Should Call ''isValid'' with correct email');
+  lTypeSut.EmailValidator.Verify('Should Call ''isValid'' with correct email');
 end;
 
 procedure TSignupTest.ShouldCallAddAccountWithCorrectValues;
