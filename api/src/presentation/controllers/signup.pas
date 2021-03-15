@@ -42,6 +42,8 @@ var
   lField: String;
   isEmailValid: Boolean;
   lBody: TJSONObject;
+
+  lName, lEmail, lPassword, lPasswordConfirmation: String;
 const
   requiredFields: TArray<String> = ['name', 'email', 'password', 'passwordConfirmation'];
 begin
@@ -58,13 +60,18 @@ begin
       end;
     end;
 
-    if not(lBody.GetValue('password').Value.Equals(lBody.GetValue('passwordConfirmation').Value)) then
+    lName := lBody.GetValue('name').Value;
+    lEmail := lBody.GetValue('email').Value;
+    lPassword := lBody.GetValue('password').Value;
+    lPasswordConfirmation := lBody.GetValue('passwordConfirmation').Value;
+
+    if not(lPassword.Equals(lPasswordConfirmation)) then
     begin
       result := badRequest(TInvalidParamError.New('passwordConfirmation').body);
       exit;
     end;
 
-    isEmailValid := self.FEmailValidator.isValid(lBody.GetValue('email').Value);
+    isEmailValid := self.FEmailValidator.isValid(lEmail);
     if not(isEmailValid) then
     begin
       result := badRequest(TInvalidParamError.New('email').body);
@@ -72,23 +79,16 @@ begin
     end;
 
     FAddAccountModel := TAddAccountModel.New //
-      .name(lBody.GetValue('name').Value) //
-      .email(lBody.GetValue('email').Value) //
-      .password(lBody.GetValue('password').Value);
+      .name(lName) //
+      .email(lEmail) //
+      .password(lPassword);
 
-    // FAddAccount.add(FAddAccountModel);
+    FAddAccount.add(FAddAccountModel);
 
-    // except
   except
-    on E: Exception do
-    begin
-      showmessage(E.ToString);
-
-      result := THttpResponse.New //
-        .statusCode(500) //
-        .body(TServerError.New.body);
-    end;
-
+    result := THttpResponse.New //
+      .statusCode(500) //
+      .body(TServerError.New.body);
   end;
 end;
 
