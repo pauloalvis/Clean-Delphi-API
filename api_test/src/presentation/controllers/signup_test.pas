@@ -49,26 +49,27 @@ type
     function MakeSutWithValidEmail: ITypeSut;
     function MakeSutWithInvalidEmail: ITypeSut;
     function MakeSutWithEmailValidatorThrows: ITypeSut;
+    function MakeSutWithAddAccountThrows: ITypeSut;
 
     procedure AssertResponseMissinParam(const AParamName: String);
   public
-    // [Test]
+    [Test]
     procedure MissingParamName;
-    // [Test]
+    [Test]
     procedure MissingParamEmail;
-    // [Test]
+    [Test]
     procedure MissingParamPassword;
-    // [Test]
+    [Test]
     procedure MissingParamPasswordConfirmation;
-    // [Test]
+    [Test]
     procedure PasswordConfirmationFails;
-    // [Test]
+    [Test]
     procedure InvalidParamErrorEmail;
     [Test]
     procedure ShouldCallEmailValidatorWithCorrectEmail;
-    // [Test]
+    [Test]
     procedure ShouldReturnError500IfEmailValidatorThrows;
-    // [Test]
+    [Test]
     procedure ShouldCallAddAccountWithCorrectValues;
   end;
 
@@ -88,6 +89,13 @@ uses
 function TSignupTest.MakeSut: ITypeSut;
 begin
   result := TTypeSut.New;
+end;
+
+function TSignupTest.MakeSutWithAddAccountThrows: ITypeSut;
+begin
+  result := MakeSut;
+  result.EmailValidator.Setup.WillReturnDefault('isValid', true);
+  result.AddAccount.Setup.WillRaise('add', EMockException);
 end;
 
 function TSignupTest.MakeSutWithEmailValidatorThrows: ITypeSut;
@@ -203,13 +211,8 @@ end;
 
 procedure TSignupTest.ShouldCallAddAccountWithCorrectValues;
 var
-  FAddAccountModel: IAddAccountModel;
+  lMakeSutWithAddAccountThrows: ITypeSut;
 begin
-  FAddAccountModel := TAddAccountModel.New //
-    .name('any_name') //
-    .email('any_email.com') //
-    .password('any_password');
-
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'any_name') //
@@ -217,11 +220,10 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  MakeSutWithInvalidEmail.AddAccount.Setup.Expect.Once.When.add(FAddAccountModel);
+  FHTTPResponse := MakeSutWithAddAccountThrows.MockSut.handle(FHTTPRequest);
 
-  MakeSutWithValidEmail.MockSut.handle(FHTTPRequest);
-
-  MakeSutWithValidEmail.AddAccount.Verify('Should Call ''AddAccount.add'' with corrects params');
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('500'), 'Shoud return: StatusCode500');
+  Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Internal Server Error"}'), 'Should return: {"error":"Internal Server Error"}');
 end;
 
 procedure TSignupTest.ShouldReturnError500IfEmailValidatorThrows;

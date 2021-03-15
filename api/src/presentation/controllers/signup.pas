@@ -47,7 +47,6 @@ var
 const
   requiredFields: TArray<String> = ['name', 'email', 'password', 'passwordConfirmation'];
 begin
-
   lBody := httpRequest.body;
   try
 
