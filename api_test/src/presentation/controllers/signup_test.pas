@@ -93,8 +93,7 @@ end;
 
 function TSignupTest.MakeSutWithAddAccountThrows: ITypeSut;
 begin
-  result := MakeSut;
-  result.EmailValidator.Setup.WillReturnDefault('isValid', true);
+  result := MakeSutWithValidEmail;
   result.AddAccount.Setup.WillRaise('add', EMockException);
 end;
 
@@ -114,7 +113,6 @@ function TSignupTest.MakeSutWithValidEmail: ITypeSut;
 begin
   result := MakeSut;
   result.EmailValidator.Setup.WillReturnDefault('isValid', true);
-  result.AddAccount.Setup.WillReturnDefault('add', true);
 end;
 
 procedure TSignupTest.MissingParamEmail;
