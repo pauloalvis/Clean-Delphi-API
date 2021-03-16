@@ -70,7 +70,9 @@ type
     [Test]
     procedure ShouldReturnError500IfEmailValidatorThrows;
     [Test]
-    procedure ShouldCallAddAccountWithCorrectValues;
+    procedure ShouldReturnError500ifAddAccounthrows;
+    [Test]
+    procedure ShouldReturn200ifValidDataProvided;
   end;
 
 implementation
@@ -207,7 +209,12 @@ begin
   lTypeSut.EmailValidator.Verify('Should Call ''isValid'' with correct email');
 end;
 
-procedure TSignupTest.ShouldCallAddAccountWithCorrectValues;
+procedure TSignupTest.ShouldReturn200ifValidDataProvided;
+begin
+  //
+end;
+
+procedure TSignupTest.ShouldReturnError500ifAddAccounthrows;
 var
   lMakeSutWithAddAccountThrows: ITypeSut;
 begin
