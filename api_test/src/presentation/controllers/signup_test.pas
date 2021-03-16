@@ -45,31 +45,29 @@ type
     FHTTPResponse: IHttpResponse;
 
     function MakeSut: ITypeSut;
-
-    function MakeSutWithValidEmail: ITypeSut;
     function MakeSutWithInvalidEmail: ITypeSut;
     function MakeSutWithEmailValidatorThrows: ITypeSut;
     function MakeSutWithAddAccountThrows: ITypeSut;
 
     procedure AssertResponseMissinParam(const AParamName: String);
   public
-    [Test]
+//    [Test]
     procedure MissingParamName;
-    [Test]
+//    [Test]
     procedure MissingParamEmail;
-    [Test]
+//    [Test]
     procedure MissingParamPassword;
-    [Test]
+//    [Test]
     procedure MissingParamPasswordConfirmation;
-    [Test]
+//    [Test]
     procedure PasswordConfirmationFails;
-    [Test]
+//    [Test]
     procedure InvalidParamErrorEmail;
-    [Test]
+//    [Test]
     procedure ShouldCallEmailValidatorWithCorrectEmail;
-    [Test]
+//    [Test]
     procedure ShouldReturnError500IfEmailValidatorThrows;
-    [Test]
+//    [Test]
     procedure ShouldReturnError500ifAddAccounthrows;
     [Test]
     procedure ShouldReturn200ifValidDataProvided;
@@ -91,30 +89,26 @@ uses
 function TSignupTest.MakeSut: ITypeSut;
 begin
   result := TTypeSut.New;
+  result.EmailValidator.Setup.WillReturnDefault('isValid', true);
+  result.AddAccount.Setup.WillReturnDefault('add', true);
 end;
 
 function TSignupTest.MakeSutWithAddAccountThrows: ITypeSut;
 begin
-  result := MakeSutWithValidEmail;
+  result := TTypeSut.New;
   result.AddAccount.Setup.WillRaise('add', EMockException);
 end;
 
 function TSignupTest.MakeSutWithEmailValidatorThrows: ITypeSut;
 begin
-  result := MakeSut;
+  result := TTypeSut.New;
   result.EmailValidator.Setup.WillRaise('isValid', EMockException);
 end;
 
 function TSignupTest.MakeSutWithInvalidEmail: ITypeSut;
 begin
-  result := MakeSut;
+  result := TTypeSut.New;
   result.EmailValidator.Setup.WillReturnDefault('isValid', false);
-end;
-
-function TSignupTest.MakeSutWithValidEmail: ITypeSut;
-begin
-  result := MakeSut;
-  result.EmailValidator.Setup.WillReturnDefault('isValid', true);
 end;
 
 procedure TSignupTest.MissingParamEmail;
@@ -210,8 +204,21 @@ begin
 end;
 
 procedure TSignupTest.ShouldReturn200ifValidDataProvided;
+var
+  lTypeSut: ITypeSut;
 begin
-  //
+  lTypeSut := MakeSut;
+
+  FHTTPRequest := THttpRequest.New //
+    .body(TJsonObject.Create //
+    .AddPair('name', 'valid_name') //
+    .AddPair('email', 'valid_email.com') //
+    .AddPair('password', 'valid_password') //
+    .AddPair('passwordConfirmation', 'valid_password'));
+
+  FHTTPResponse := lTypeSut.MockSut.handle(FHTTPRequest);
+
+  Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('200'), 'Should return: StatusCode 200');
 end;
 
 procedure TSignupTest.ShouldReturnError500ifAddAccounthrows;

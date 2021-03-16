@@ -84,6 +84,9 @@ begin
 
     FAddAccount.add(FAddAccountModel);
 
+    result := THttpResponse.New //
+      .statusCode(200);
+
   except
     result := THttpResponse.New //
       .statusCode(500) //
