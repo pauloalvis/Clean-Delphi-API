@@ -1,4 +1,4 @@
-unit signup_test;
+zunit signup_test;
 
 interface
 
@@ -51,23 +51,23 @@ type
 
     procedure AssertResponseMissinParam(const AParamName: String);
   public
-//    [Test]
+    // [Test]
     procedure MissingParamName;
-//    [Test]
+    // [Test]
     procedure MissingParamEmail;
-//    [Test]
+    // [Test]
     procedure MissingParamPassword;
-//    [Test]
+    // [Test]
     procedure MissingParamPasswordConfirmation;
-//    [Test]
+    // [Test]
     procedure PasswordConfirmationFails;
-//    [Test]
+    // [Test]
     procedure InvalidParamErrorEmail;
-//    [Test]
-    procedure ShouldCallEmailValidatorWithCorrectEmail;
-//    [Test]
+    // [Test]
+    procedure ShouldCallEmailValidatorWithCorrectEmail; // esse
+    // [Test]
     procedure ShouldReturnError500IfEmailValidatorThrows;
-//    [Test]
+    // [Test]
     procedure ShouldReturnError500ifAddAccounthrows;
     [Test]
     procedure ShouldReturn200ifValidDataProvided;
@@ -87,10 +87,18 @@ uses
   delphi.mocks.Behavior;
 
 function TSignupTest.MakeSut: ITypeSut;
+var
+  IAccount: IAddAccountModel;
 begin
   result := TTypeSut.New;
   result.EmailValidator.Setup.WillReturnDefault('isValid', true);
-  result.AddAccount.Setup.WillReturnDefault('add', true);
+
+  IAccount := TAddAccountModel.New //
+    .name('any_name') //
+    .email('invalid_email.com') //
+    .password('any_password');
+
+  result.AddAccount.Setup.WillReturn('add', IAccount);
 end;
 
 function TSignupTest.MakeSutWithAddAccountThrows: ITypeSut;
@@ -196,7 +204,7 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  lTypeSut.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com');
+  lTypeSut.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com-');
 
   lTypeSut.MockSut.handle(FHTTPRequest);
 
@@ -204,11 +212,7 @@ begin
 end;
 
 procedure TSignupTest.ShouldReturn200ifValidDataProvided;
-var
-  lTypeSut: ITypeSut;
 begin
-  lTypeSut := MakeSut;
-
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'valid_name') //
@@ -216,9 +220,12 @@ begin
     .AddPair('password', 'valid_password') //
     .AddPair('passwordConfirmation', 'valid_password'));
 
-  FHTTPResponse := lTypeSut.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSut.MockSut.handle(FHTTPRequest);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('200'), 'Should return: StatusCode 200');
+
+  FHTTPResponse.body;
+
 end;
 
 procedure TSignupTest.ShouldReturnError500ifAddAccounthrows;

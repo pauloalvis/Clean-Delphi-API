@@ -28,7 +28,8 @@ implementation
 
 uses
   invalid_param_error,
-  system.SysUtils;
+  system.SysUtils,
+  account;
 
 constructor TSignupController.Create(AEmailValidator: IEmailValidator; AAddAccount: IAddAccount);
 begin
@@ -38,7 +39,8 @@ end;
 
 function TSignupController.handle(const httpRequest: IHttpRequest): IHttpResponse;
 var
-  FAddAccountModel: IAddAccountModel;
+  lAccountModel: IAccountModel;
+  lAddAccountModel: IAddAccountModel;
   lField: String;
   isEmailValid: Boolean;
   lBody: TJSONObject;
@@ -77,20 +79,33 @@ begin
       exit;
     end;
 
-    FAddAccountModel := TAddAccountModel.New //
+    lAddAccountModel := TAddAccountModel.New //
       .name(lName) //
       .email(lEmail) //
       .password(lPassword);
 
-    FAddAccount.add(FAddAccountModel);
+    lAccountModel := FAddAccount.add(lAddAccountModel);
 
     result := THttpResponse.New //
-      .statusCode(200);
+      .statusCode(200) //
+      .body(TJSONObject.Create //
+      .AddPair('name', lName) //
+      .AddPair('email', lEmail) //
+      .AddPair('password', lPassword));
+
+    // except
 
   except
-    result := THttpResponse.New //
-      .statusCode(500) //
-      .body(TServerError.New.body);
+
+    on E: Exception do
+    begin
+      showmessage(E.ToString);
+
+      result := THttpResponse.New //
+        .statusCode(500) //
+        .body(TServerError.New.body);
+    end;
+
   end;
 end;
 

@@ -21,7 +21,7 @@ type
 
   IAddAccount = interface
     ['{3212DFB8-7B72-4406-895A-290E85CA7001}']
-    function add(const account: IAddAccountModel): Boolean;
+    function add(const account: IAddAccountModel): IAccountModel;
   end;
 
   TAddAccountModel = class(TInterfacedObject, IAddAccountModel)
