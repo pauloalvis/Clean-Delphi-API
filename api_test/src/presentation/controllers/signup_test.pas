@@ -137,7 +137,7 @@ procedure TSignupTest.MissingParamName;
 begin
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
-    .AddPair('email', 'any_email2hotmail.com') //
+    .AddPair('email', 'any_email') //
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
