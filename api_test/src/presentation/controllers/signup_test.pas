@@ -51,23 +51,23 @@ type
 
     procedure AssertResponseMissinParam(const AParamName: String);
   public
-    // [Test]
+    [Test]
     procedure MissingParamName;
-    // [Test]
+    [Test]
     procedure MissingParamEmail;
-    // [Test]
+    [Test]
     procedure MissingParamPassword;
-    // [Test]
+    [Test]
     procedure MissingParamPasswordConfirmation;
-    // [Test]
+    [Test]
     procedure PasswordConfirmationFails;
-    // [Test]
+    [Test]
     procedure InvalidParamErrorEmail;
-    // [Test]
-    procedure ShouldCallEmailValidatorWithCorrectEmail; // esse
-    // [Test]
+    [Test]
+    procedure ShouldCallEmailValidatorWithCorrectEmail;
+    [Test]
     procedure ShouldReturnError500IfEmailValidatorThrows;
-    // [Test]
+    [Test]
     procedure ShouldReturnError500ifAddAccounthrows;
     [Test]
     procedure ShouldReturn200ifValidDataProvided;
@@ -195,7 +195,7 @@ begin
     .AddPair('password', 'any_password') //
     .AddPair('passwordConfirmation', 'any_password'));
 
-  lTypeSut.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com-');
+  lTypeSut.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com');
 
   lTypeSut.MockSut.handle(FHTTPRequest);
 
@@ -233,8 +233,6 @@ begin
 end;
 
 procedure TSignupTest.ShouldReturnError500ifAddAccounthrows;
-var
-  lMakeSutWithAddAccountThrows: ITypeSut;
 begin
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
