@@ -87,18 +87,9 @@ uses
   delphi.mocks.Behavior;
 
 function TSignupTest.MakeSut: ITypeSut;
-var
-  IAccount: IAddAccountModel;
 begin
   result := TTypeSut.New;
   result.EmailValidator.Setup.WillReturnDefault('isValid', true);
-
-  IAccount := TAddAccountModel.New //
-    .name('any_name') //
-    .email('invalid_email.com') //
-    .password('any_password');
-
-  result.AddAccount.Setup.WillReturn('add', IAccount);
 end;
 
 function TSignupTest.MakeSutWithAddAccountThrows: ITypeSut;
@@ -212,7 +203,19 @@ begin
 end;
 
 procedure TSignupTest.ShouldReturn200ifValidDataProvided;
+var
+  lMakeSut: ITypeSut;
+  AddAccountAsValue: TValue;
 begin
+  lMakeSut := MakeSut;
+
+
+  AddAccountAsValue := TValue.From(lMakeSut.AddAccount.Instance);
+
+  lMakeSut.AddAccount.Setup.WillReturn(TAccountModel.New).When.add(TAddAccountModel.New.name('teste'));
+
+  // lMakeSut.AddAccount.Setup.WillReturn(AddAccountAsValue).When.add(TAddAccountModel.New.name('teste'));
+
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'valid_name') //
