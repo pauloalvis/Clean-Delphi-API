@@ -1,4 +1,4 @@
-zunit signup_test;
+unit signup_test;
 
 interface
 
