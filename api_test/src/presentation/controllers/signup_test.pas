@@ -205,16 +205,16 @@ end;
 procedure TSignupTest.ShouldReturn200ifValidDataProvided;
 var
   lMakeSut: ITypeSut;
-  AddAccountAsValue: TValue;
+  lAccountStub: IAccountModel;
 begin
+  lAccountStub := TAccountModel.New //
+    .id('valid_id') //
+    .name('valid_name') //
+    .email('valid_email') //
+    .password('valid_password');
+
   lMakeSut := MakeSut;
-
-
-  AddAccountAsValue := TValue.From(lMakeSut.AddAccount.Instance);
-
-  lMakeSut.AddAccount.Setup.WillReturn(TAccountModel.New).When.add(TAddAccountModel.New.name('teste'));
-
-  // lMakeSut.AddAccount.Setup.WillReturn(AddAccountAsValue).When.add(TAddAccountModel.New.name('teste'));
+  lMakeSut.AddAccount.Setup.WillReturnDefault('add', TValue.From(lAccountStub));
 
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
@@ -223,12 +223,13 @@ begin
     .AddPair('password', 'valid_password') //
     .AddPair('passwordConfirmation', 'valid_password'));
 
-  FHTTPResponse := MakeSut.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := lMakeSut.MockSut.handle(FHTTPRequest);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('200'), 'Should return: StatusCode 200');
-
-  FHTTPResponse.body;
-
+  Assert.IsTrue(FHTTPResponse.body.GetValue('id').Value.Equals('valid_id'), 'Should return: valid_id');
+  Assert.IsTrue(FHTTPResponse.body.GetValue('name').Value.Equals('valid_name'), 'Should return: valid_name');
+  Assert.IsTrue(FHTTPResponse.body.GetValue('email').Value.Equals('valid_email'), 'Should return: valid_email');
+  Assert.IsTrue(FHTTPResponse.body.GetValue('password').Value.Equals('valid_password'), 'Should return: valid_password');
 end;
 
 procedure TSignupTest.ShouldReturnError500ifAddAccounthrows;

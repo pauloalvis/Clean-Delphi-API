@@ -89,23 +89,15 @@ begin
     result := THttpResponse.New //
       .statusCode(200) //
       .body(TJSONObject.Create //
-      .AddPair('name', lName) //
-      .AddPair('email', lEmail) //
-      .AddPair('password', lPassword));
-
-    // except
+      .AddPair('id', lAccountModel.name) //
+      .AddPair('name', lAccountModel.name) //
+      .AddPair('email', lAccountModel.email) //
+      .AddPair('password', lAccountModel.password));
 
   except
-
-    on E: Exception do
-    begin
-      showmessage(E.ToString);
-
-      result := THttpResponse.New //
-        .statusCode(500) //
-        .body(TServerError.New.body);
-    end;
-
+    result := THttpResponse.New //
+      .statusCode(500) //
+      .body(TServerError.New.body);
   end;
 end;
 
