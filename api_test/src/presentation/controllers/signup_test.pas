@@ -87,9 +87,18 @@ uses
   delphi.mocks.Behavior;
 
 function TSignupTest.MakeSut: ITypeSut;
+var
+  lAccountStub: IAccountModel;
 begin
+  lAccountStub := TAccountModel.New //
+    .id('valid_id') //
+    .name('valid_name') //
+    .email('valid_email') //
+    .password('valid_password');
+
   result := TTypeSut.New;
   result.EmailValidator.Setup.WillReturnDefault('isValid', true);
+  result.AddAccount.Setup.WillReturnDefault('add', TValue.From(lAccountStub));
 end;
 
 function TSignupTest.MakeSutWithAddAccountThrows: ITypeSut;
@@ -203,19 +212,7 @@ begin
 end;
 
 procedure TSignupTest.ShouldReturn200ifValidDataProvided;
-var
-  lMakeSut: ITypeSut;
-  lAccountStub: IAccountModel;
 begin
-  lAccountStub := TAccountModel.New //
-    .id('valid_id') //
-    .name('valid_name') //
-    .email('valid_email') //
-    .password('valid_password');
-
-  lMakeSut := MakeSut;
-  lMakeSut.AddAccount.Setup.WillReturnDefault('add', TValue.From(lAccountStub));
-
   FHTTPRequest := THttpRequest.New //
     .body(TJsonObject.Create //
     .AddPair('name', 'valid_name') //
@@ -223,7 +220,7 @@ begin
     .AddPair('password', 'valid_password') //
     .AddPair('passwordConfirmation', 'valid_password'));
 
-  FHTTPResponse := lMakeSut.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSut.MockSut.handle(FHTTPRequest);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('200'), 'Should return: StatusCode 200');
   Assert.IsTrue(FHTTPResponse.body.GetValue('id').Value.Equals('valid_id'), 'Should return: valid_id');
