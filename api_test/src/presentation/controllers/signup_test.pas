@@ -49,6 +49,8 @@ type
     function MakeSutWithEmailValidatorThrows: ITypeSut;
     function MakeSutWithAddAccountThrows: ITypeSut;
 
+    function MakeHttpRequestAnyValues: IHttpRequest;
+
     procedure AssertResponseMissinParam(const AParamName: String);
   public
     [Test]
@@ -85,6 +87,17 @@ uses
   System.Rtti,
   delphi.mocks.Interfaces,
   delphi.mocks.Behavior;
+
+function TSignupTest.MakeHttpRequestAnyValues: IHttpRequest;
+begin
+  result := THttpRequest.New.body( //
+    TJsonObject.Create //
+    .AddPair('name', 'any_name') //
+    .AddPair('email', 'any_email.com') //
+    .AddPair('password', 'any_password') //
+    .AddPair('passwordConfirmation', 'any_password') //
+    );
+end;
 
 function TSignupTest.MakeSut: ITypeSut;
 var
@@ -197,30 +210,16 @@ var
 begin
   lTypeSut := MakeSutWithInvalidEmail;
 
-  FHTTPRequest := THttpRequest.New //
-    .body(TJsonObject.Create //
-    .AddPair('name', 'any_name') //
-    .AddPair('email', 'any_email.com') //
-    .AddPair('password', 'any_password') //
-    .AddPair('passwordConfirmation', 'any_password'));
-
   lTypeSut.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com');
 
-  lTypeSut.MockSut.handle(FHTTPRequest);
+  lTypeSut.MockSut.handle(MakeHttpRequestAnyValues);
 
   lTypeSut.EmailValidator.Verify('Should Call ''isValid'' with correct email');
 end;
 
 procedure TSignupTest.ShouldReturn200ifValidDataProvided;
 begin
-  FHTTPRequest := THttpRequest.New //
-    .body(TJsonObject.Create //
-    .AddPair('name', 'valid_name') //
-    .AddPair('email', 'valid_email.com') //
-    .AddPair('password', 'valid_password') //
-    .AddPair('passwordConfirmation', 'valid_password'));
-
-  FHTTPResponse := MakeSut.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSut.MockSut.handle(MakeHttpRequestAnyValues);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('200'), 'Should return: StatusCode 200');
   Assert.IsTrue(FHTTPResponse.body.GetValue('id').Value.Equals('valid_id'), 'Should return: valid_id');
@@ -231,14 +230,7 @@ end;
 
 procedure TSignupTest.ShouldReturnError500ifAddAccounthrows;
 begin
-  FHTTPRequest := THttpRequest.New //
-    .body(TJsonObject.Create //
-    .AddPair('name', 'any_name') //
-    .AddPair('email', 'any_email.com') //
-    .AddPair('password', 'any_password') //
-    .AddPair('passwordConfirmation', 'any_password'));
-
-  FHTTPResponse := MakeSutWithAddAccountThrows.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSutWithAddAccountThrows.MockSut.handle(MakeHttpRequestAnyValues);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('500'), 'Shoud return: StatusCode500');
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Internal Server Error"}'), 'Should return: {"error":"Internal Server Error"}');
@@ -246,14 +238,7 @@ end;
 
 procedure TSignupTest.ShouldReturnError500IfEmailValidatorThrows;
 begin
-  FHTTPRequest := THttpRequest.New //
-    .body(TJsonObject.Create //
-    .AddPair('name', 'any_name') //
-    .AddPair('email', 'any_email.com') //
-    .AddPair('password', 'any_password') //
-    .AddPair('passwordConfirmation', 'any_password'));
-
-  FHTTPResponse := MakeSutWithEmailValidatorThrows.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSutWithEmailValidatorThrows.MockSut.handle(MakeHttpRequestAnyValues);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('500'), 'Shoud return: StatusCode500');
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Internal Server Error"}'), 'Should return: {"error":"Internal Server Error"}');
@@ -261,14 +246,7 @@ end;
 
 procedure TSignupTest.InvalidParamErrorEmail;
 begin
-  FHTTPRequest := THttpRequest.New //
-    .body(TJsonObject.Create //
-    .AddPair('name', 'any_name') //
-    .AddPair('email', 'invalid_email.com') //
-    .AddPair('password', 'any_password') //
-    .AddPair('passwordConfirmation', 'any_password'));
-
-  FHTTPResponse := MakeSutWithInvalidEmail.MockSut.handle(FHTTPRequest);
+  FHTTPResponse := MakeSutWithInvalidEmail.MockSut.handle(MakeHttpRequestAnyValues);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Should return: StatusCode 400');
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Invalid param: email"}'), format('Should return %s, valor retornado %s', [FHTTPResponse.body.ToJSON, '{"error":"Invalid param: email"}']));
