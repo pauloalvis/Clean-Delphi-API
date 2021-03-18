@@ -1,11 +1,11 @@
-unit controller;
+unit controller_intf;
 
 interface
 
 uses
   System.JSON,
 
-  http;
+  http_intf;
 
 type
 

@@ -16,14 +16,15 @@ uses
   signup_test in 'src\presentation\controllers\signup_test.pas',
   signup in '..\api\src\presentation\controllers\signup.pas',
   missing_param_error in '..\api\src\presentation\errors\missing_param_error.pas',
-  http in '..\api\src\presentation\protocols\http.pas',
   error in '..\api\src\presentation\errors\error.pas',
   http_helpers in '..\api\src\presentation\helpers\http_helpers.pas',
-  controller in '..\api\src\presentation\protocols\controller.pas',
   invalid_param_error in '..\api\src\presentation\errors\invalid_param_error.pas',
-  email_validator in '..\api\src\presentation\protocols\email_validator.pas',
   account in '..\api\src\domain\models\account.pas',
-  add_account in '..\api\src\domain\usecases\add_account.pas';
+  add_account in '..\api\src\domain\usecases\add_account.pas',
+  email_validator_adapter_test in 'src\utils\email_validator_adapter_test.pas',
+  controller_intf in '..\api\src\presentation\protocols\controller_intf.pas',
+  email_validator_intf in '..\api\src\presentation\protocols\email_validator_intf.pas',
+  http_intf in '..\api\src\presentation\protocols\http_intf.pas';
 
 var
   runner: ITestRunner;

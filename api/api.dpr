@@ -8,14 +8,14 @@ uses
   signup in 'src\presentation\controllers\signup.pas',
   missing_param_error in 'src\presentation\errors\missing_param_error.pas',
   error in 'src\presentation\errors\error.pas',
-  http in 'src\presentation\protocols\http.pas',
   http_helpers in 'src\presentation\helpers\http_helpers.pas',
-  controller in 'src\presentation\protocols\controller.pas',
-  email_validator in 'src\presentation\protocols\email_validator.pas',
   invalid_param_error in 'src\presentation\errors\invalid_param_error.pas',
-  server_error in 'src\presentation\errors\server_error.pas',
   add_account in 'src\domain\usecases\add_account.pas',
-  account in 'src\domain\models\account.pas';
+  account in 'src\domain\models\account.pas',
+  controller_intf in 'src\presentation\protocols\controller_intf.pas',
+  email_validator_intf in 'src\presentation\protocols\email_validator_intf.pas',
+  http_intf in 'src\presentation\protocols\http_intf.pas',
+  email_validator in 'src\utils\email_validator.pas';
 
 type
   TCliente = class

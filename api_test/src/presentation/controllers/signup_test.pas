@@ -6,13 +6,14 @@ uses
   System.JSON,
   DUnitX.TestFramework,
 
-  http,
   signup,
-  controller,
-  delphi.mocks,
-  email_validator,
+  account,
+
+  http_intf,
+  controller_intf,
   add_account,
-  account;
+  delphi.mocks,
+  email_validator_intf;
 
 type
   ITypeSut = interface
@@ -48,7 +49,7 @@ type
     function MakeSutWithEmailValidatorThrows: ITypeSut;
     function MakeSutWithAddAccountThrows: ITypeSut;
 
-    function MakeHttpRequestAnyValues: IHttpRequest;
+    function MakeHttpRequestWithAnyValues: IHttpRequest;
 
     procedure AssertResponseMissinParam(const AParamName: String);
   public
@@ -77,17 +78,14 @@ type
 implementation
 
 uses
-  vcl.dialogs,
-
+  System.Rtti,
   System.SysUtils,
+  delphi.mocks.Interfaces,
 
   missing_param_error,
-  invalid_param_error,
-  System.Rtti,
-  delphi.mocks.Interfaces,
-  delphi.mocks.Behavior;
+  invalid_param_error;
 
-function TSignupTest.MakeHttpRequestAnyValues: IHttpRequest;
+function TSignupTest.MakeHttpRequestWithAnyValues: IHttpRequest;
 begin
   result := THttpRequest.New.body( //
     TJsonObject.Create //
@@ -142,6 +140,7 @@ begin
   FHTTPResponse := MakeSut.MockSut.handle(FHTTPRequest);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Should return: StatusCode 400');
+
   AssertResponseMissinParam('email');
 end;
 
@@ -211,14 +210,14 @@ begin
 
   lTypeSut.EmailValidator.Setup.Expect.Once.When.isValid('any_email.com');
 
-  lTypeSut.MockSut.handle(MakeHttpRequestAnyValues);
+  lTypeSut.MockSut.handle(MakeHttpRequestWithAnyValues);
 
   lTypeSut.EmailValidator.Verify('Should Call ''isValid'' with correct email');
 end;
 
 procedure TSignupTest.ShouldReturn200ifValidDataProvided;
 begin
-  FHTTPResponse := MakeSut.MockSut.handle(MakeHttpRequestAnyValues);
+  FHTTPResponse := MakeSut.MockSut.handle(MakeHttpRequestWithAnyValues);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('200'), 'Should return: StatusCode 200');
   Assert.IsTrue(FHTTPResponse.body.GetValue('id').Value.Equals('valid_id'), 'Should return: valid_id');
@@ -229,7 +228,7 @@ end;
 
 procedure TSignupTest.ShouldReturnError500ifAddAccounthrows;
 begin
-  FHTTPResponse := MakeSutWithAddAccountThrows.MockSut.handle(MakeHttpRequestAnyValues);
+  FHTTPResponse := MakeSutWithAddAccountThrows.MockSut.handle(MakeHttpRequestWithAnyValues);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('500'), 'Shoud return: StatusCode500');
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Internal Server Error"}'), 'Should return: {"error":"Internal Server Error"}');
@@ -237,7 +236,7 @@ end;
 
 procedure TSignupTest.ShouldReturnError500IfEmailValidatorThrows;
 begin
-  FHTTPResponse := MakeSutWithEmailValidatorThrows.MockSut.handle(MakeHttpRequestAnyValues);
+  FHTTPResponse := MakeSutWithEmailValidatorThrows.MockSut.handle(MakeHttpRequestWithAnyValues);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('500'), 'Shoud return: StatusCode500');
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Internal Server Error"}'), 'Should return: {"error":"Internal Server Error"}');
@@ -245,7 +244,7 @@ end;
 
 procedure TSignupTest.InvalidParamErrorEmail;
 begin
-  FHTTPResponse := MakeSutWithInvalidEmail.MockSut.handle(MakeHttpRequestAnyValues);
+  FHTTPResponse := MakeSutWithInvalidEmail.MockSut.handle(MakeHttpRequestWithAnyValues);
 
   Assert.IsTrue(FHTTPResponse.statusCode.ToString.Equals('400'), 'Should return: StatusCode 400');
   Assert.IsTrue(FHTTPResponse.body.ToJSON.Equals('{"error":"Invalid param: email"}'), format('Should return %s, valor retornado %s', [FHTTPResponse.body.ToJSON, '{"error":"Invalid param: email"}']));

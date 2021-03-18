@@ -5,14 +5,12 @@ interface
 uses
   system.json,
 
-  http,
-  controller,
+  http_intf,
+  controller_intf,
   http_helpers,
-  email_validator,
-  missing_param_error,
-
-  vcl.dialogs,
-  add_account;
+  add_account,
+  email_validator_intf,
+  missing_param_error;
 
 type
   TSignupController = class(TInterfacedObject, IController)
@@ -26,9 +24,10 @@ type
 implementation
 
 uses
-  invalid_param_error,
   system.SysUtils,
-  account;
+
+  account,
+  invalid_param_error;
 
 constructor TSignupController.Create(AEmailValidator: IEmailValidator; AAddAccount: IAddAccount);
 begin
@@ -71,7 +70,7 @@ begin
       exit;
     end;
 
-    isEmailValid := self.FEmailValidator.isValid(lEmail);
+    isEmailValid := FEmailValidator.isValid(lEmail);
     if not(isEmailValid) then
     begin
       result := badRequest(TInvalidParamError.New('email').body);
