@@ -7,7 +7,6 @@ uses
 
   http,
   controller,
-  server_error,
   http_helpers,
   email_validator,
   missing_param_error,
@@ -86,18 +85,14 @@ begin
 
     lAccountModel := FAddAccount.add(lAddAccountModel);
 
-    result := THttpResponse.New //
-      .statusCode(200) //
-      .body(TJSONObject.Create //
+    result := ok(TJSONObject.Create //
       .AddPair('id', lAccountModel.id) //
       .AddPair('name', lAccountModel.name) //
       .AddPair('email', lAccountModel.email) //
       .AddPair('password', lAccountModel.password));
 
   except
-    result := THttpResponse.New //
-      .statusCode(500) //
-      .body(TServerError.New.body);
+    result := serverError;
   end;
 end;
 

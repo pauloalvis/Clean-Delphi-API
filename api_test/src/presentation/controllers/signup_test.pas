@@ -8,7 +8,6 @@ uses
 
   http,
   signup,
-  server_error,
   controller,
   delphi.mocks,
   email_validator,
@@ -101,9 +100,9 @@ end;
 
 function TSignupTest.MakeSut: ITypeSut;
 var
-  lAccountStub: IAccountModel;
+  FakeAccount: IAccountModel;
 begin
-  lAccountStub := TAccountModel.New //
+  FakeAccount := TAccountModel.New //
     .id('valid_id') //
     .name('valid_name') //
     .email('valid_email') //
@@ -111,7 +110,7 @@ begin
 
   result := TTypeSut.New;
   result.EmailValidator.Setup.WillReturnDefault('isValid', true);
-  result.AddAccount.Setup.WillReturnDefault('add', TValue.From(lAccountStub));
+  result.AddAccount.Setup.WillReturnDefault('add', TValue.From(FakeAccount));
 end;
 
 function TSignupTest.MakeSutWithAddAccountThrows: ITypeSut;
