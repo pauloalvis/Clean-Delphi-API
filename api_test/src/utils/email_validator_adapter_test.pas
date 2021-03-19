@@ -18,26 +18,25 @@ type
   TEmailValidatorAdapterTest = class(TObject)
   public
     [Test]
-    procedure ShouldReturnFalseIfValidatorReturnFalse;
+    procedure ShouldReturnFalseIfEmailNotValid;
     [Test]
-    procedure ShouldReturnTrueIfValidatorReturnTrue;
+    procedure ShouldReturnTrueIfEmailValid;
   end;
 
-procedure TEmailValidatorAdapterTest.ShouldReturnFalseIfValidatorReturnFalse;
+procedure TEmailValidatorAdapterTest.ShouldReturnFalseIfEmailNotValid;
 var
-  sut: TMock<IEmailValidator>;
   isValid: Boolean;
+  sut: IEmailValidator;
 begin
-  sut := TMock<IEmailValidator>.Create;
-  sut.Setup.WillReturn('isValid', false);
-  isValid := sut.isValid('invalid_email@email.com');
+  sut := TEmailValidatorAdapter.New;
+  isValid := sut.isValid('invalid_email');
   Assert.IsFalse(isValid);
 end;
 
-procedure TEmailValidatorAdapterTest.ShouldReturnTrueIfValidatorReturnTrue;
+procedure TEmailValidatorAdapterTest.ShouldReturnTrueIfEmailValid;
 var
-  sut: IEmailValidator;
   isValid: Boolean;
+  sut: IEmailValidator;
 begin
   sut := TEmailValidatorAdapter.New;
   isValid := sut.isValid('valid_email@gmail.com');
