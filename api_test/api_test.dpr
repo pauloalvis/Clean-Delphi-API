@@ -24,7 +24,8 @@ uses
   email_validator_adapter_test in 'src\utils\email_validator_adapter_test.pas',
   controller_intf in '..\api\src\presentation\protocols\controller_intf.pas',
   email_validator_intf in '..\api\src\presentation\protocols\email_validator_intf.pas',
-  http_intf in '..\api\src\presentation\protocols\http_intf.pas';
+  http_intf in '..\api\src\presentation\protocols\http_intf.pas',
+  email_validator in '..\api\src\utils\email_validator.pas';
 
 var
   runner: ITestRunner;

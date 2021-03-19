@@ -80,7 +80,6 @@ implementation
 uses
   System.Rtti,
   System.SysUtils,
-  delphi.mocks.Interfaces,
 
   missing_param_error,
   invalid_param_error;
@@ -287,5 +286,7 @@ begin
 end;
 
 initialization
+
+TDUnitX.RegisterTestFixture(TSignupTest);
 
 end.
