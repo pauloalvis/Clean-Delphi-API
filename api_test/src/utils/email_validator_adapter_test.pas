@@ -19,15 +19,28 @@ type
   public
     [Test]
     procedure ShouldReturnFalseIfValidatorReturnFalse;
+    [Test]
+    procedure ShouldReturnTrueIfValidatorReturnTrue;
   end;
 
 procedure TEmailValidatorAdapterTest.ShouldReturnFalseIfValidatorReturnFalse;
+var
+  sut: TMock<IEmailValidator>;
+  isValid: Boolean;
+begin
+  sut := TMock<IEmailValidator>.Create;
+  sut.Setup.WillReturn('isValid', false);
+  isValid := sut.isValid('invalid_email@email.com');
+  Assert.IsFalse(isValid);
+end;
+
+procedure TEmailValidatorAdapterTest.ShouldReturnTrueIfValidatorReturnTrue;
 var
   sut: IEmailValidator;
   isValid: Boolean;
 begin
   sut := TEmailValidatorAdapter.New;
-  isValid := sut.isValid('invalid_email@email.com');
+  isValid := sut.isValid('valid_email@gmail.com');
   Assert.IsTrue(isValid);
 end;
 

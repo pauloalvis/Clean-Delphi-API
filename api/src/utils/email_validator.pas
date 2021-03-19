@@ -3,6 +3,7 @@ unit email_validator;
 interface
 
 uses
+  RegularExpressions,
   email_validator_intf;
 
 type
@@ -16,13 +17,16 @@ type
 implementation
 
 function TEmailValidatorAdapter.isValid(const email: String): Boolean;
+var
+  RegEx: TRegEx;
 begin
-  result := true;
+  RegEx := TRegEx.Create('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]*[a-zA-Z0-9]+$');
+  Result := RegEx.Match(email).Success;
 end;
 
 class function TEmailValidatorAdapter.New: IEmailValidator;
 begin
-  result := Self.Create;
+  Result := Self.Create;
 end;
 
 end.
