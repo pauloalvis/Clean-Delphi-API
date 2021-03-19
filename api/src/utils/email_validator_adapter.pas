@@ -1,4 +1,4 @@
-unit email_validator;
+unit email_validator_adapter;
 
 interface
 

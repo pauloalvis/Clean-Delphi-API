@@ -9,7 +9,7 @@ uses
 implementation
 
 uses
-  email_validator,
+  email_validator_adapter,
   email_validator_intf;
 
 type
@@ -26,20 +26,20 @@ type
 procedure TEmailValidatorAdapterTest.ShouldReturnFalseIfEmailNotValid;
 var
   isValid: Boolean;
-  sut: IEmailValidator;
 begin
-  sut := TEmailValidatorAdapter.New;
-  isValid := sut.isValid('invalid_email');
+  isValid := TEmailValidatorAdapter.New //
+    .isValid('invalid_email');
+
   Assert.IsFalse(isValid);
 end;
 
 procedure TEmailValidatorAdapterTest.ShouldReturnTrueIfEmailValid;
 var
   isValid: Boolean;
-  sut: IEmailValidator;
 begin
-  sut := TEmailValidatorAdapter.New;
-  isValid := sut.isValid('valid_email@gmail.com');
+  isValid := TEmailValidatorAdapter.New //
+    .isValid('valid_email@gmail.com');
+
   Assert.IsTrue(isValid);
 end;
 
