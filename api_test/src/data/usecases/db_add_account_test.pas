@@ -23,11 +23,12 @@ uses
 
 procedure TDBADDAccountTest.ShouldCallEncrypterWithCorrectPassword;
 var
-  accountData: IAddAccountModel;
   sut: IADDAccount;
+  accountData: IAddAccountModel;
   encryperStub: TMock<IEncrypter>;
 begin
   encryperStub := TMock<IEncrypter>.Create;
+  encryperStub.Setup.WillReturnDefault('encrypt', 'valid_password');
 
   sut := TDBADDAccount.New(encryperStub);
 

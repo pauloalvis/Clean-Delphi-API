@@ -1,52 +1,52 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<test-results name="C:\projetos\Clean-Delphi-API\api_test\exe\api_test.exe" total="13" errors="1" failures="0" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2021-03-29" time="0.096">
+<test-results name="C:\Clean-Delphi-API\api_test\exe\api_test.exe" total="13" errors="1" failures="0" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2021-03-29" time="0.116">
   <culture-info current-culture="en" current-uiculture="en" />
-  <test-suite type="Assembly" name="api_test.exe" executed="true" result="Failure" success="False" time="0.096" asserts="0">
+  <test-suite type="Assembly" name="api_test.exe" executed="true" result="Failure" success="False" time="0.116" asserts="0">
     <results>
-        <test-suite type="Namespace" name="db_add_account_test" executed="true" result="Success" success="True" time="0.096" asserts="0" >
+        <test-suite type="Namespace" name="email_validator_adapter_test" executed="true" result="Success" success="True" time="0.115" asserts="0" >
           <results>
-              <test-suite type="Fixture" name="TDBADDAccountTest" executed="True" result="Success" success="True" time="0.096" >
+              <test-suite type="Fixture" name="TEmailValidatorAdapterTest" executed="True" result="Success" success="True" time="0.115" >
                 <results>
-                  <test-case name="ShouldCallEncrypterWithCorrectPassword" executed="True" result="Error" success="False" time="0.043" asserts="0" >
-                    <failure>
-                      <message>
-                        <![CDATA[ 
-  Method : encrypt
-    Expectation [ At Least Once When( valid_password ) ] was not met. ]]>
-                      </message>
-                      <stack-trace>
-                        <![CDATA[  ]]>
-                      </stack-trace>
-                    </failure>
-                  </test-case>
+                  <test-case name="ShouldReturnFalseIfEmailNotValid" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                  <test-case name="ShouldReturnTrueIfEmailValid" executed="True" result="Success" success="True" time="0.000" asserts="0" />
                 </results>
               </test-suite>
           </results>
         </test-suite>
-        <test-suite type="Namespace" name="signup_test" executed="true" result="Success" success="True" time="0.053" asserts="0" >
+        <test-suite type="Namespace" name="signup_test" executed="true" result="Success" success="True" time="0.114" asserts="0" >
           <results>
-              <test-suite type="Fixture" name="TSignupTest" executed="True" result="Success" success="True" time="0.053" >
+              <test-suite type="Fixture" name="TSignupTest" executed="True" result="Success" success="True" time="0.114" >
                 <results>
-                  <test-case name="MissingParamName" executed="True" result="Success" success="True" time="0.001" asserts="0" />
+                  <test-case name="MissingParamName" executed="True" result="Success" success="True" time="0.000" asserts="0" />
                   <test-case name="MissingParamEmail" executed="True" result="Success" success="True" time="0.000" asserts="0" />
                   <test-case name="MissingParamPassword" executed="True" result="Success" success="True" time="0.000" asserts="0" />
                   <test-case name="MissingParamPasswordConfirmation" executed="True" result="Success" success="True" time="0.000" asserts="0" />
                   <test-case name="PasswordConfirmationFails" executed="True" result="Success" success="True" time="0.000" asserts="0" />
                   <test-case name="InvalidParamErrorEmail" executed="True" result="Success" success="True" time="0.000" asserts="0" />
                   <test-case name="ShouldCallEmailValidatorWithCorrectEmail" executed="True" result="Success" success="True" time="0.000" asserts="0" />
-                  <test-case name="ShouldReturnError500IfEmailValidatorThrows" executed="True" result="Success" success="True" time="0.039" asserts="0" />
-                  <test-case name="ShouldReturnError500ifAddAccounthrows" executed="True" result="Success" success="True" time="0.009" asserts="0" />
+                  <test-case name="ShouldReturnError500IfEmailValidatorThrows" executed="True" result="Success" success="True" time="0.063" asserts="0" />
+                  <test-case name="ShouldReturnError500ifAddAccounthrows" executed="True" result="Success" success="True" time="0.000" asserts="0" />
                   <test-case name="ShouldReturn200ifValidDataProvided" executed="True" result="Success" success="True" time="0.000" asserts="0" />
                 </results>
               </test-suite>
           </results>
         </test-suite>
-        <test-suite type="Namespace" name="email_validator_adapter_test" executed="true" result="Success" success="True" time="0.001" asserts="0" >
+        <test-suite type="Namespace" name="db_add_account_test" executed="true" result="Success" success="True" time="0.045" asserts="0" >
           <results>
-              <test-suite type="Fixture" name="TEmailValidatorAdapterTest" executed="True" result="Success" success="True" time="0.001" >
+              <test-suite type="Fixture" name="TDBADDAccountTest" executed="True" result="Success" success="True" time="0.045" >
                 <results>
-                  <test-case name="ShouldReturnFalseIfEmailNotValid" executed="True" result="Success" success="True" time="0.001" asserts="0" />
-                  <test-case name="ShouldReturnTrueIfEmailValid" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                  <test-case name="ShouldCallEncrypterWithCorrectPassword" executed="True" result="Error" success="False" time="0.047" asserts="0" >
+                    <failure>
+                      <message>
+                        <![CDATA[ 
+  Method : encrypt
+    Expectation [ At Least Once When( valid_password1 ) ] was not met. ]]>
+                      </message>
+                      <stack-trace>
+                        <![CDATA[  ]]>
+                      </stack-trace>
+                    </failure>
+                  </test-case>
                 </results>
               </test-suite>
           </results>

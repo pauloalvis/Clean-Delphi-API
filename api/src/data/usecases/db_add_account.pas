@@ -24,7 +24,7 @@ implementation
 
 function TDBAddAccount.add(const account: IAddAccountModel): IAccountModel;
 begin
-  //
+  FEncrypter.encrypt(account.password);
 end;
 
 constructor TDBAddAccount.Create(const AValue: IEncrypter);
