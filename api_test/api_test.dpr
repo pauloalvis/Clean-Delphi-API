@@ -25,7 +25,10 @@ uses
   controller_intf in '..\api\src\presentation\protocols\controller_intf.pas',
   email_validator_intf in '..\api\src\presentation\protocols\email_validator_intf.pas',
   http_intf in '..\api\src\presentation\protocols\http_intf.pas',
-  email_validator_adapter in '..\api\src\utils\email_validator_adapter.pas';
+  email_validator_adapter in '..\api\src\utils\email_validator_adapter.pas',
+  db_add_account_test in 'src\data\usecases\db_add_account_test.pas',
+  db_add_account in '..\api\src\data\usecases\db_add_account.pas',
+  encrypter in '..\api\src\data\protocols\encrypter.pas';
 
 var
   runner: ITestRunner;

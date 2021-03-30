@@ -15,7 +15,9 @@ uses
   controller_intf in 'src\presentation\protocols\controller_intf.pas',
   email_validator_intf in 'src\presentation\protocols\email_validator_intf.pas',
   http_intf in 'src\presentation\protocols\http_intf.pas',
-  email_validator_adapter in 'src\utils\email_validator_adapter.pas';
+  email_validator_adapter in 'src\utils\email_validator_adapter.pas',
+  db_add_account in 'src\data\usecases\db_add_account.pas',
+  encrypter in 'src\data\protocols\encrypter.pas';
 
 type
   TCliente = class
