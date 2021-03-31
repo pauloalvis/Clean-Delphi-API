@@ -11,28 +11,28 @@ uses
   db_add_account;
 
 type
-  ITypeSut = interface
+  ISutType = interface
     ['{6B289352-E5CA-4F63-845F-523EC2A99E86}']
-    function MockSut: IAddAccount;
-    function MockEncrypter: TMock<IEncrypter>;
+    function Sut: IAddAccount;
+    function EncrypterStub: TMock<IEncrypter>;
   end;
 
-  TTypeSut = class(TInterfacedObject, ITypeSut)
+  TSutType = class(TInterfacedObject, ISutType)
   private
-    FMockSut: IAddAccount;
-    FMockEncrypter: TMock<IEncrypter>;
+    FSutType: IAddAccount;
+    FEncrypterStub: TMock<IEncrypter>;
 
-    function MockSut: IAddAccount;
-    function MockEncrypter: TMock<IEncrypter>;
+    function Sut: IAddAccount;
+    function EncrypterStub: TMock<IEncrypter>;
 
     constructor Create;
   private
-    class function New: ITypeSut;
+    class function New: ISutType;
   end;
 
   [TestFixture]
   TDBADDAccountTest = class
-    function MakeSut: ITypeSut;
+    function MakeSut: ISutType;
 
   public
     [Test]
@@ -41,50 +41,50 @@ type
 
 implementation
 
-function TDBADDAccountTest.MakeSut: ITypeSut;
+function TDBADDAccountTest.MakeSut: ISutType;
 begin
-  result := TTypeSut.New;
-  result.MockEncrypter.Setup.WillReturnDefault('encrypt', 'valid_password');
+  result := TSutType.New;
+  result.EncrypterStub.Setup.WillReturnDefault('encrypt', 'default_password');
 end;
 
 procedure TDBADDAccountTest.ShouldCallEncrypterWithCorrectPassword;
 var
-  lTypeSut: ITypeSut;
-  accountDataDummie: IAddAccountModel;
+  lSutType: ISutType;
+  accountDataStub: IAddAccountModel;
 begin
-  accountDataDummie := TAddAccountModel.New //
+  lSutType := MakeSut;
+
+  lSutType.EncrypterStub.Setup.Expect.AtLeastOnce.When.encrypt('valid_password');
+
+  accountDataStub := TAddAccountModel.New //
     .name('valid_name') //
     .email('valid_email') //
     .password('valid_password');
 
-  lTypeSut := MakeSut;
+  lSutType.Sut.add(accountDataStub);
 
-  lTypeSut.MockEncrypter.Setup.Expect.AtLeastOnce.When.encrypt('valid_password');
-
-  lTypeSut.MockSut.add(accountDataDummie);
-
-  lTypeSut.MockEncrypter.Verify;
+  lSutType.EncrypterStub.Verify;
 end;
 
-constructor TTypeSut.Create;
+constructor TSutType.Create;
 begin
-  FMockEncrypter := TMock<IEncrypter>.Create;
-  FMockSut := TDBADDAccount.New(FMockEncrypter);
+  FEncrypterStub := TMock<IEncrypter>.Create;
+  FSutType := TDBADDAccount.New(FEncrypterStub);
 end;
 
-function TTypeSut.MockEncrypter: TMock<IEncrypter>;
+function TSutType.EncrypterStub: TMock<IEncrypter>;
 begin
-  result := FMockEncrypter;
+  result := FEncrypterStub;
 end;
 
-function TTypeSut.MockSut: IAddAccount;
+function TSutType.Sut: IAddAccount;
 begin
-  result := FMockSut;
+  result := FSutType;
 end;
 
-class function TTypeSut.New: ITypeSut;
+class function TSutType.New: ISutType;
 begin
-  result := TTypeSut.Create;
+  result := TSutType.Create;
 end;
 
 initialization
