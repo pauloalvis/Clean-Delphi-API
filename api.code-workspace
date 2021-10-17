@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"omnipascal.delphiInstallationPath": "C:\\Program Files (x86)\\Embarcadero\\Studio\\21.0",
+		"omnipascal.searchPath": "C:\projetos\clean-api-delphi\\*",
+		"favorites.sortDirection": "ASC",
+		"problems.decorations.enabled": false,
+		"todo-tree.tree.scanMode": "workspace",
+		"todo-tree.tree.showBadges": false
+	}
+
+}
